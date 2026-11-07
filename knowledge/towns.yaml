@@ -1,0 +1,73 @@
+# 地域知识库（孤岛镇 / 住房危机镇 / 治安调研）
+# 维护：每轮筛查发现新镇按同格式追加；治安结论注明来源与口径冲突。
+# 判定字段 = 卡片的 location + employer 文本。
+
+# 孤岛/偏远镇（一刀切排除：交通不便 + 生活成本高，任何条件抵不过）
+island_patterns:
+  - NANTUCKET
+  - "MARTHA.?S VINEYARD"
+  - VINEYARD HAVEN
+  - OAK BLUFFS
+  - EDGARTOWN
+  - WEST TISBURY
+  - CHILMARK
+  - AQUINNAH
+  - MACKINAC
+  - MACKINAW
+  - KEY WEST
+  - BLOCK ISLAND
+  - CATALINA
+  - VINALHAVEN
+  - ISLESBORO
+  - MONHEGAN
+  - NORTH HAVEN
+  - SWANS ISLAND
+  - DEER HARBOR
+  - ORCAS ISLAND
+  - FRIDAY HARBOR
+  - SHELTER ISLAND
+  # 细节名单（缩写/分区，历轮补齐）：
+  - SIASCONSET
+  - POINT O WOODS
+  - "TISBURY, MA"
+  - "SHELTER IS"
+  - EASTSOUND
+  - "OCEAN BEACH, NY"
+
+# 住房危机镇（旺季房租暴涨，必须雇主提供住宿；config: housing.crisis_towns_require_host_housing）
+crisis_towns:
+  - TAHOE            # Tahoe 湖区（CA/NV，含 Squaw Valley / Palisades 等）
+  - VAIL
+  - ESTES PARK
+  - WEST YELLOWSTONE
+  - LAKE PLACID
+  - MONTAUK
+
+# 治安调研库（口径：公开来源交叉——FBI UCR / City-Data / CrimeGrade / 当地警局报告；
+# 注意：小旅游镇人均犯罪率会被游客拉高，口径冲突必须注明）
+safety:
+  BAR HARBOR:        {grade: "A+", note: 日常安全}
+  LOVELL:            {grade: "A+", note: 小乡村，安全}
+  LELAND:            {grade: "A+", note: 小旅游镇，安全}
+  RED RIVER:         {grade: "A+", note: 滑雪小镇，安全}
+  LINCOLN:           {grade: "A+", note: NH 白山门户，安全}
+  PORTSMOUTH:        {grade: A,   note: 安全}
+  CODY:              {grade: A,   note: 黄石东门，安全}
+  BIGFORK:           {grade: A,   note: 安全}
+  OLD ORCHARD BEACH: {grade: A,   note: 旅游海滩镇，安全}
+  STURGEON BAY:      {grade: A,   note: 门郡主镇，安全}
+  KEYSTONE:          {grade: A,   note: 黑山，安全}
+  CUSTER:            {grade: A,   note: 黑山，安全}
+  CAPE COD:          {grade: A,   note: 鳕鱼角整体安全}
+  SEA ISLE:          {grade: A,   note: 2024 年仅 3 起暴力事件}
+  TYBEE ISLAND:      {grade: B,   note: 日常安全，派对周末较乱}
+  GATLINBURG:        {grade: B,   note: 口径混乱（旅游高峰季），但陌生人暴力低}
+  LACONIA:           {grade: B,   note: 盗窃偏高}
+  BIG BEAR LAKE:     {grade: B,   note: 暴力犯罪偏高}
+  WEST GLACIER:      {grade: B,   note: 数据混杂，谨慎}
+  SEASIDE:           {grade: C,   note: OR，盗窃多 + 海啸风险区}
+  ATLANTIC CITY:     {grade: C,   note: 治安复杂，慎选}
+  WISCONSIN DELLS:   {grade: C,   note: NeighborhoodScout 3/100 vs 居民自评 97 分，口径矛盾}
+  COOKE CITY:        {grade: "?", note: 71 人小镇，无 FBI 统计，口径冲突}
+  NORTH WILDWOOD:    {grade: "?", note: PlainCrime D/36 小样本，口径冲突}
+  OCEAN CITY:        {grade: B,   note: MD，人均犯罪被 30 万游客拉高；2026 独立日有社媒事件}

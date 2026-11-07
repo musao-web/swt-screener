@@ -1,0 +1,153 @@
+# IE 标准岗位 → 默认档位映射（岗位红线的默认值来源）
+# 档位：A=优先  B=标注  C=红线  X=排除
+# 默认值 = 第一位用户口径：X 集 = IE Job Preferences 未勾选 6 岗 + 个人追加；
+# 用户可通过 config.redline 覆盖，无需改本文件。
+# 备注：IE 岗位 taxonomy 共 53 种，此处收录交接文档所录 49 条；未见到的岗位按 default: A 处理并在筛查时提示。
+
+positions:
+  Attractions Attendant:   {zh: 游乐设施服务员, default: A}
+  Barista:                 {zh: 咖啡师,       default: A}
+  Bartender:               {zh: 调酒师,       default: A}
+  Bell/Door Person:        {zh: 门童/迎宾,    default: A}
+  Bus Person:              {zh: 清桌员,       default: X, note: 只清桌收盘，无小费}
+  Campground Team Member:  {zh: 营地杂活,     default: X, note: 杂活集合}
+  Caricature Artist:       {zh: 漫画艺人,     default: A, note: 需技能}
+  Cashier:                 {zh: 收银,         default: A}
+  Cleaner:                 {zh: 清洁工,       default: X}   # IE 未勾选
+  Cook:                    {zh: 后厨厨师,     default: X}   # IE 未勾选
+  Counter Help:            {zh: 柜台帮工,     default: A}
+  Deli Worker:             {zh: 熟食柜台工,   default: X}
+  Dishwasher:              {zh: 洗碗工,       default: X}   # IE 未勾选
+  Fast Food Crew:          {zh: 快餐店员,     default: B, note: 详情页常含清洁/备餐职责}
+  Food and Beverage Assistant: {zh: 餐饮助理, default: A}
+  Food Prep/Prep Cook:     {zh: 备菜,         default: X}
+  Front Desk:              {zh: 前台,         default: A}
+  Games Attendant:         {zh: 游戏区服务员, default: A}
+  Grocery Clerk:           {zh: 超市店员,     default: A, note: 原文含 "unloading the grocery truck" = 实为理货 → 排除}
+  Groundskeeping:          {zh: 园丁/场地维护, default: X, note: 纯苦力}
+  Guest Services:          {zh: 客户服务,     default: A}
+  Hospitality Crew:        {zh: 综合酒店岗,   default: C, note: 洗衣/客房/后厨/前台轮岗}
+  Host/Hostess:            {zh: 领位,         default: A}
+  Housekeeping:            {zh: 客房保洁,     default: X}   # IE 未勾选
+  Ice Cream Sales:         {zh: 冰淇淋销售,   default: A}
+  Kitchen Help:            {zh: 后厨帮工,     default: X}   # IE 未勾选
+  Lifeguard:               {zh: 救生员,       default: X, note: 需救生证；IE 未勾选}   # IE 未勾选
+  Lift Operator:           {zh: 缆车操作员,   default: A}
+  Maintenance:             {zh: 维修工,       default: X, note: 纯苦力}
+  Mountain Operations:     {zh: 山地运营,     default: X, note: 体力活}
+  Office Assistant and Clerk: {zh: 办公室助理, default: A}
+  Park Services:           {zh: 园区服务,     default: A}
+  Parking Lot Attendant:   {zh: 停车场管理员, default: A}
+  Pool/Beach Attendant:    {zh: 泳池/海滩服务员, default: B, note: 含少量毛巾/清洁职责}
+  Public Area Attendant:   {zh: 公共区域保洁, default: X}
+  Rental Attendant:        {zh: 租赁服务员,   default: A}
+  Ride Operator:           {zh: 游乐设施操作员, default: A}
+  Sailing Instructor:      {zh: 帆船教练,     default: A, note: 需技能/证}
+  Sales Help:              {zh: 销售,         default: A}
+  Server:                  {zh: 服务员,       default: A}
+  Server Assistant:        {zh: 传菜打杂,     default: X, note: 传菜+打杂，无小费}
+  Ski Instructor:          {zh: 滑雪教练,     default: A, note: 需技能}
+  Ski Services:            {zh: 雪具服务,     default: A}
+  Snack Bar Attendant:     {zh: 小吃吧服务员, default: A}
+  Souvenir Photographer:   {zh: 纪念照摄影师, default: A}
+  Spa Attendant:           {zh: 水疗服务员,   default: A}
+  Stock Clerk:             {zh: 仓库理货,     default: X, note: 纯体力}
+  Tent Installer:          {zh: 帐篷安装,     default: X, note: 纯体力}
+  Waitstaff:               {zh: 服务员,       default: A}
+
+# 详情页 Position Description 首句的实岗角色 → 档位
+# （首句格式："<role> are/will be responsible for..."；role 为复数小写）
+detail_roles:
+  excluded:   # 实岗为这些 → 排除（历轮陷阱口径）
+    - cooks
+    - housekeepers
+    - dishwasher
+    - kitchen helpers
+    - bus persons
+    - prep cooks
+    - stock clerks
+    - cleaners
+    - maintenance workers
+    - groundskeepers
+    - deli workers
+    - server assistants
+    - campground team members
+    - public area attendants
+  redlined:   # 实岗为这些 → 红线档（C）
+    - hospitality crewmembers
+  noted:      # 实岗为这些 → 标注（B）+ 说明
+    pool/beach attendants: 含少量毛巾/清洁职责
+    lifeguards: 需救生证
+  canon:      # 实岗角色 → 卡片标题归一名（"卡片写X 实为Y"判定用）
+    servers: server
+    waitstaff: server
+    hosts/hostesses: host/hostess
+    cashiers: cashier
+    sales helpers: sales help
+    front desk positions: front desk
+    ice cream sellers: ice cream sales
+    counter helpers: counter help
+    fast food crews: fast food crew
+    grocery clerks: grocery clerk
+    guests services: guest services
+    pool/beach attendants: pool/beach attendant
+    rental attendants: rental attendant
+    snack bar attendants: snack bar attendant
+    food and beverage assistants: food and beverage assistant
+    bartenders: bartender
+  zh:         # 实岗角色中文名（报告用）
+    servers: 服务员
+    waitstaff: 服务员
+    fast food crews: 快餐店员
+    sales helpers: 销售
+    cashiers: 收银
+    front desk positions: 前台
+    ice cream sellers: 冰淇淋销售
+    bartenders: 调酒师
+    food and beverage assistants: 餐饮助理
+    counter helpers: 柜台帮工
+    rental attendants: 租赁服务员
+    grocery clerks: 超市店员
+    guests services: 客户服务
+    hosts/hostesses: 领位
+    snack bar attendants: 小吃吧服务员
+    hospitality crewmembers: 综合酒店岗
+    pool/beach attendants: 泳池/海滩服务员
+    lifeguards: 救生员
+    cooks: 后厨厨师
+    housekeepers: 客房保洁
+    dishwasher: 洗碗工
+    kitchen helpers: 后厨帮工
+    bus persons: 清桌员
+    prep cooks: 备菜
+    stock clerks: 仓库理货
+    cleaners: 清洁工
+    maintenance workers: 维修工
+    groundskeepers: 园丁
+    deli workers: 熟食柜台工
+    server assistants: 传菜打杂
+    campground team members: 营地杂活
+    public area attendants: 公共区域保洁
+
+# 卡片标题别名归一（"卡片写X 实为Y"判定用）
+canon_titles:
+  waitstaff: server
+  server: server
+  host/hostess: host/hostess
+  cashier: cashier
+  sales help: sales help
+  barista: barista
+  bartender: bartender
+  counter help: counter help
+  ice cream sales: ice cream sales
+  snack bar attendant: snack bar attendant
+  pool/beach attendant: pool/beach attendant
+  rental attendant: rental attendant
+  grocery clerk: grocery clerk
+  fast food crew: fast food crew
+  food and beverage assistant: food and beverage assistant
+  hospitality crew: hospitality crew
+  guest services: guest services
+  attractions attendant: attractions attendant
+  ride operator: ride operator
+  front desk: front desk

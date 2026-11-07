@@ -1,0 +1,13 @@
+# 个人数据（真实档案与口径，绝不入库）
+profile.yaml
+config.yaml
+
+# 筛查产物与临时文件
+/screen_result.json
+/screening_history.json
+*.log
+
+# 系统与缓存
+.DS_Store
+__pycache__/
+*.pyc

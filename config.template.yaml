@@ -1,0 +1,75 @@
+# ============================================================
+# swt-screener 配置模板：全部筛选口径由你自己设置
+# 使用方式：复制为 config.yaml 后填写，或在工作台网页表单（webapp/index.html）
+#          里点选并导出。空值 = 该维度不启用，screen.py 自动跳过，不影响其他维度。
+# 日期格式："MM-DD"（按季节年比较，不绑定年份）；完整日期用 "YYYY-MM-DD"。
+# ============================================================
+
+# ---------- 活跃度 ----------
+season_year:                       # 你计划出发的年份（如 2027）：雇主 Last Visited 必须在此年，否则是僵尸岗
+
+# ---------- 到岗维度：岗位 Start 窗口 vs 你的到岗计划 ----------
+arrival:
+  priority_on_or_after:            # 你的计划到岗日（"MM-DD"）：岗位到岗窗口结束日 ≥ 此日 → 到岗 OK
+  acceptable_on_or_after:          # 最早可接受的到岗日（"MM-DD"）：≥ 此日但早于计划日 → 标注需提前到岗
+  reject_winter: false             # 是否排除冬季岗（到岗 9 月及以后）
+
+# ---------- 离岗维度：岗位 Finish 窗口 vs 你的离岗硬约束 ----------
+departure:
+  deadline:                        # 最晚必须离岗日（"MM-DD"）：岗位离岗窗口起始日必须 ≤ 此日，否则排除
+  reject_off_season_year: false    # 离岗延到下一年的岗位是否排除
+
+# ---------- 住宿维度（室友数上限 + 租金线） ----------
+housing:
+  max_roommates:                   # 可接受上限：≤N 人/间（1 = 单人间 ★）
+  warn_roommates:                  # ≥N 人/间 → 标注（B）
+  exclude_roommates:               # ≥N 人/间 → 排除（X）
+  max_rent_weekly:                 # 周租金 > 此值 → 标注「租金偏高」
+  crisis_towns_require_host_housing: false   # 住房危机镇（名单见 knowledge/towns.yaml）必须有雇主住宿，否则标注
+
+# ---------- 岗位红线 ----------
+redline:
+  free_text_exclude: []            # 不想做的岗位关键词（岗位名/标题词/职责词），命中标题或详情职责 → 排除（X），如 Cook / DISHWASH
+  free_text_redline: []            # 红线关键词，命中标题或详情职责 → 红线档（C），如 LAUNDRY
+
+# ---------- 薪资工时线 ----------
+wage_hours:
+  min_wage:                        # 时薪 < 此值 → 标注（B），如 15.0
+  min_hours:                       # 周工时 < 此值 → 标注（B），如 32
+
+# ---------- 地域筛选 ----------
+regions:
+  allow: []                        # 白名单（州/区域/城市名），空 = 不限
+  exclude: []                      # 黑名单
+  prefer: []                       # 偏好州（只影响排序加权，不排除），如 [HI, WA, NY]
+  exclude_island_towns: false      # 孤岛/偏远镇一刀切排除（名单见 knowledge/towns.yaml）
+
+# ---------- 陷阱检测：卡片标题 vs 详情页实岗 ----------
+traps:
+  enabled: true                    # 详情页 Position Description 首句判定实岗；案例库见 knowledge/traps.md
+
+# ---------- 报告 ----------
+report:
+  format: html                     # 输出 HTML 报告
+  lang: zh                         # 报告语言（zh / en）
+  include_contacts: true           # 每岗带联系方式块
+  include_email_drafts: true       # 每岗带填好的求职邮件草稿
+
+# ---------- 历轮筛查历史 ----------
+history:
+  file: "screening_history.json"   # 历轮记录 JSON（history.py 维护，报告自动读取）
+  dedup: true                      # 已核查过的卡自动标记「沿用」，只筛新卡
+
+# ---------- 邮件草稿 ----------
+email:
+  enabled: true
+  subject_template: "Summer Position Application — {position} (InterExchange)"
+  include_contact: true            # 签名带联系方式（profile.yaml 的邮箱/电话/WhatsApp，空项跳过）
+  no_questions: true               # 邮件里不提问题（住宿细节等雇主回复后再谈）
+  closing_line: "I am very interested in this position and would be glad to provide any additional information. I look forward to hearing from you."
+  max_words: 120                   # 正文目标字数（AI 定稿时保持简约明了）
+
+# ---------- 分档判定 ----------
+tiering:
+  order: [X, C, B, A]              # 判定顺序：先排除→红线→标注→优先
+  sort_by: [wage_desc, hours_desc, rent_asc]  # 同档内排序优先级

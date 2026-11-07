@@ -1,0 +1,19 @@
+# ============================================================
+# swt-screener 个人档案模板（记忆模块）
+# 使用方式：复制为 profile.yaml 后填写，或在工作台网页表单（webapp/index.html）
+#          里填写并导出。首次填写后自动复用，之后的筛查与求职邮件都会自动引用。
+# ============================================================
+name: "你的姓名"
+contact:
+  email: "your@email.com"          # 求职邮件会用这个邮箱
+  phone: ""                        # 可选
+  whatsapp: ""                     # 可选
+school: "你的学校"
+major: "你的专业"
+sponsor: "InterExchange"           # J-1 项目方
+arrival: "2027-06-01"              # 计划到岗日（YYYY-MM-DD）
+departure: "2027-09-15"            # 离岗日（YYYY-MM-DD，硬约束）
+video_url: ""                      # 可选：自我介绍视频链接
+experiences:                       # 相关工作经历与优势（逐条，会写进求职邮件）
+  - "示例：campus ambassador / sales experience"
+  - "示例：event operations internship"

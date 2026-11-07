@@ -1,0 +1,919 @@
+{
+ "generated": "2026-11-04",
+ "counts": {
+  "A": 10,
+  "B": 9,
+  "C": 3,
+  "X": 9
+ },
+ "jobs": [
+  {
+   "tier": "A",
+   "slug": "105225",
+   "title": "Cashier",
+   "employer": "Wellfleet Theaters",
+   "location": "South Wellfleet, MA · New England",
+   "href": "/wt/employers/4328/enrollment_profiles/105225",
+   "lastVisited": "Nov 03 2026",
+   "wage": 17.0,
+   "hours": 30,
+   "tips": false,
+   "SW": [
+    "2027-05-26",
+    "2027-06-26"
+   ],
+   "FW": [
+    "2027-08-31",
+    "2027-09-08"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "Assisted",
+   "reasons": [
+    "收银",
+    "到岗 05/26–06/26（未设到岗线，不判定）",
+    "离岗 08/31–09/08（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "102985",
+   "title": "Sales Help",
+   "employer": "Shelly's By The Sea",
+   "location": "Ocean City, NJ · Mid-Atlantic",
+   "href": "/wt/employers/64512/enrollment_profiles/102985",
+   "lastVisited": "Nov 03 2026",
+   "wage": 15.92,
+   "hours": 35,
+   "tips": false,
+   "SW": [
+    "2027-05-05",
+    "2027-06-20"
+   ],
+   "FW": [
+    "2027-09-07",
+    "2027-10-15"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "Assisted",
+   "reasons": [
+    "销售",
+    "到岗 05/05–06/20（未设到岗线，不判定）",
+    "离岗 09/07–10/15（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "103287",
+   "title": "Sales Help",
+   "employer": "No Cap",
+   "location": "Wildwood, NJ · Mid-Atlantic",
+   "href": "/wt/employers/63341/enrollment_profiles/103287",
+   "lastVisited": "Nov 02 2026",
+   "wage": 15.23,
+   "hours": 40,
+   "tips": false,
+   "SW": [
+    "2027-05-13",
+    "2027-06-15"
+   ],
+   "FW": [
+    "2027-08-15",
+    "2027-09-30"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "",
+   "reasons": [
+    "销售",
+    "到岗 05/13–06/15（未设到岗线，不判定）",
+    "离岗 08/15–09/30（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "103391",
+   "title": "Server",
+   "employer": "Muncheese",
+   "location": "Wildwood, NJ · Mid-Atlantic",
+   "href": "/wt/employers/63340/enrollment_profiles/103391",
+   "lastVisited": "Nov 02 2026",
+   "wage": 15.23,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-06-05"
+   ],
+   "FW": [
+    "2027-08-20",
+    "2027-09-10"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "",
+   "reasons": [
+    "服务员",
+    "到岗 05/01–06/05（未设到岗线，不判定）",
+    "离岗 08/20–09/10（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "100116",
+   "title": "Cashier",
+   "employer": "Half Moon Enterprises",
+   "location": "Laconia, NH · New England",
+   "href": "/wt/employers/6134/enrollment_profiles/100116",
+   "lastVisited": "Nov 03 2026",
+   "wage": 15.0,
+   "hours": 50,
+   "tips": false,
+   "SW": [
+    "2027-05-25",
+    "2027-06-29"
+   ],
+   "FW": [
+    "2027-08-29",
+    "2027-09-08"
+   ],
+   "rent": null,
+   "share": "3",
+   "housing": "Provided",
+   "reasons": [
+    "收银",
+    "到岗 05/25–06/29（未设到岗线，不判定）",
+    "离岗 08/29–09/08（未设离岗线，不判定）",
+    "住宿 3 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "101068",
+   "title": "Front Desk",
+   "employer": "Antlers Lodge",
+   "location": "Cooke City, MT · Rocky Mountains",
+   "href": "/wt/employers/6409/enrollment_profiles/101068",
+   "lastVisited": "Nov 02 2026",
+   "wage": 15.0,
+   "hours": 40,
+   "tips": false,
+   "SW": [
+    "2027-05-15",
+    "2027-06-19"
+   ],
+   "FW": [
+    "2027-09-04",
+    "2027-10-01"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "前台",
+    "到岗 05/15–06/19（未设到岗线，不判定）",
+    "离岗 09/04–10/01（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "102906",
+   "title": "Bartender",
+   "employer": "The Cove Restaurant",
+   "location": "Leland, MI · Midwest",
+   "href": "/wt/employers/2512/enrollment_profiles/102906",
+   "lastVisited": "Nov 03 2026",
+   "wage": 15.0,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-04-01",
+    "2027-08-01"
+   ],
+   "FW": [
+    "2027-09-01",
+    "2027-10-31"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "调酒师",
+    "到岗 04/01–08/01（未设到岗线，不判定）",
+    "离岗 09/01–10/31（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "101298",
+   "title": "Cashier",
+   "employer": "Ober Gatlinburg",
+   "location": "Gatlinburg, TN · South",
+   "href": "/wt/employers/5756/enrollment_profiles/101298",
+   "lastVisited": "Nov 02 2026",
+   "wage": 14.0,
+   "hours": 32,
+   "tips": false,
+   "SW": [
+    "2027-05-15",
+    "2027-06-30"
+   ],
+   "FW": [
+    "2027-09-15",
+    "2027-10-15"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "收银",
+    "到岗 05/15–06/30（未设到岗线，不判定）",
+    "离岗 09/15–10/15（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "102314",
+   "title": "Server",
+   "employer": "Riley's By The River",
+   "location": "Alexandria Bay, NY · Mid-Atlantic",
+   "href": "/wt/employers/54040/enrollment_profiles/102314",
+   "lastVisited": "Nov 02 2026",
+   "wage": 13.3,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-05-16",
+    "2027-06-20"
+   ],
+   "FW": [
+    "2027-08-16",
+    "2027-10-13"
+   ],
+   "rent": 100.0,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "服务员",
+    "到岗 05/16–06/20（未设到岗线，不判定）",
+    "离岗 08/16–10/13（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "A",
+   "slug": "101242",
+   "title": "Food and Beverage Assistant",
+   "employer": "Oar House Restaurant",
+   "location": "Portsmouth, NH · New England",
+   "href": "/wt/employers/10571/enrollment_profiles/101242",
+   "lastVisited": "Nov 03 2026",
+   "wage": 11.0,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-05-15",
+    "2027-06-30"
+   ],
+   "FW": [
+    "2027-09-08",
+    "2027-10-31"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "餐饮助理",
+    "到岗 05/15–06/30（未设到岗线，不判定）",
+    "离岗 09/08–10/31（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "102449",
+   "title": "Ride Operator",
+   "employer": "Lake George Expedition Park",
+   "location": "Lake George, NY · Mid-Atlantic",
+   "href": "/wt/employers/336/enrollment_profiles/102449",
+   "lastVisited": "Nov 03 2026",
+   "wage": 16.0,
+   "hours": 40,
+   "tips": false,
+   "SW": [
+    "2027-05-15",
+    "2027-07-01"
+   ],
+   "FW": [
+    "2027-09-07",
+    "2027-09-07"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "",
+   "reasons": [
+    "卡片写Ride Operator 实为ride operators",
+    "ride operators",
+    "到岗 05/15–07/01（未设到岗线，不判定）",
+    "离岗 09/07–09/07（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "99295",
+   "title": "Pool/Beach Attendant",
+   "employer": "Hilton Myrtle Beach Resort",
+   "location": "Myrtle Beach, SC · South",
+   "href": "/wt/employers/61170/enrollment_profiles/99295",
+   "lastVisited": "Nov 03 2026",
+   "wage": 15.0,
+   "hours": 40,
+   "tips": false,
+   "SW": [
+    "2027-05-01",
+    "2027-06-21"
+   ],
+   "FW": [
+    "2027-08-23",
+    "2027-10-03"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "卡片写Pool/Beach Attendant 实为服务员",
+    "服务员",
+    "到岗 05/01–06/21（未设到岗线，不判定）",
+    "离岗 08/23–10/03（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "105788",
+   "title": "Server Assistant",
+   "employer": "The Ritz-Carlton Club Aspen Highlands",
+   "location": "Aspen, CO · Rocky Mountains",
+   "href": "/wt/employers/5676/enrollment_profiles/105788",
+   "lastVisited": "Nov 03 2026",
+   "wage": 14.81,
+   "hours": 32,
+   "tips": true,
+   "SW": [
+    "2027-06-06",
+    "2027-06-20"
+   ],
+   "FW": [
+    "2027-09-01",
+    "2027-10-03"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "",
+   "reasons": [
+    "卡片写Server Assistant 实为spa attendants",
+    "spa attendants",
+    "到岗 06/06–06/20（未设到岗线，不判定）",
+    "离岗 09/01–10/03（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "104702",
+   "title": "Barista",
+   "employer": "LUMA Cafe Niagara Falls",
+   "location": "Niagara Falls, NY · Mid-Atlantic",
+   "href": "/wt/employers/58796/enrollment_profiles/104702",
+   "lastVisited": "Nov 02 2026",
+   "wage": 14.2,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-06-30"
+   ],
+   "FW": [
+    "2027-09-05",
+    "2027-11-30"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "卡片写Barista 实为baristas",
+    "baristas",
+    "到岗 05/01–06/30（未设到岗线，不判定）",
+    "离岗 09/05–11/30（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "102419",
+   "title": "Food and Beverage Assistant",
+   "employer": "Pier 16 Seafood Restaurant",
+   "location": "Tybee Island, GA · South",
+   "href": "/wt/employers/59006/enrollment_profiles/102419",
+   "lastVisited": "Nov 03 2026",
+   "wage": 12.0,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-06-12"
+   ],
+   "FW": [
+    "2027-09-04",
+    "2027-09-30"
+   ],
+   "rent": null,
+   "share": "3",
+   "housing": "Provided",
+   "reasons": [
+    "卡片写Food and Beverage Assistant 实为领位",
+    "领位",
+    "到岗 05/01–06/12（未设到岗线，不判定）",
+    "离岗 09/04–09/30（未设离岗线，不判定）",
+    "住宿 3 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "104402",
+   "title": "Barista",
+   "employer": "The Ocean City Coffee Company- Main",
+   "location": "Ocean City, NJ · Mid-Atlantic",
+   "href": "/wt/employers/58635/enrollment_profiles/104402",
+   "lastVisited": "Nov 03 2026",
+   "wage": 9.0,
+   "hours": 32,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-07-18"
+   ],
+   "FW": [
+    "2027-08-24",
+    "2027-10-18"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "卡片写Barista 实为baristas",
+    "baristas",
+    "到岗 05/01–07/18（未设到岗线，不判定）",
+    "离岗 08/24–10/18（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "105292",
+   "title": "Barista",
+   "employer": "The Ocean City Coffee Company",
+   "location": "Ocean City, NJ · Mid-Atlantic",
+   "href": "/wt/employers/59809/enrollment_profiles/105292",
+   "lastVisited": "Nov 03 2026",
+   "wage": 9.0,
+   "hours": 32,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-07-18"
+   ],
+   "FW": [
+    "2027-08-24",
+    "2027-10-18"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "卡片写Barista 实为baristas",
+    "baristas",
+    "到岗 05/01–07/18（未设到岗线，不判定）",
+    "离岗 08/24–10/18（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "99995",
+   "title": "Barista",
+   "employer": "The Ocean City Coffee Company",
+   "location": "Ocean City, NJ · Mid-Atlantic",
+   "href": "/wt/employers/62948/enrollment_profiles/99995",
+   "lastVisited": "Nov 03 2026",
+   "wage": 9.0,
+   "hours": 32,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-07-18"
+   ],
+   "FW": [
+    "2027-08-24",
+    "2027-10-18"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "卡片写Barista 实为baristas",
+    "baristas",
+    "到岗 05/01–07/18（未设到岗线，不判定）",
+    "离岗 08/24–10/18（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "B",
+   "slug": "104796",
+   "title": "Bartender",
+   "employer": "Purple Urchin Restaurant",
+   "location": "Hampton, NH · New England",
+   "href": "/wt/employers/4118/enrollment_profiles/104796",
+   "lastVisited": "Nov 03 2026",
+   "wage": 3.27,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-05-15",
+    "2027-06-19"
+   ],
+   "FW": [
+    "2027-09-01",
+    "2027-09-18"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "",
+   "reasons": [
+    "卡片写Bartender 实为领位",
+    "领位",
+    "到岗 05/15–06/19（未设到岗线，不判定）",
+    "离岗 09/01–09/18（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "C",
+   "slug": "104138",
+   "title": "Hospitality Crew",
+   "employer": "Lazy River Rentals",
+   "location": "Seaside Heights, NJ · Mid-Atlantic",
+   "href": "/wt/employers/54707/enrollment_profiles/104138",
+   "lastVisited": "Nov 03 2026",
+   "wage": 16.0,
+   "hours": 32,
+   "tips": true,
+   "SW": [
+    "2027-05-15",
+    "2027-06-30"
+   ],
+   "FW": [
+    "2027-09-06",
+    "2027-09-15"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "综合酒店岗综合酒店岗(红线:洗衣/客房/后厨/前台轮岗)",
+    "到岗 05/15–06/30（未设到岗线，不判定）",
+    "离岗 09/06–09/15（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "C",
+   "slug": "103177",
+   "title": "Hospitality Crew",
+   "employer": "voco The Cadence by IHG Hotels",
+   "location": "Niagara Falls, NY · Mid-Atlantic",
+   "href": "/wt/employers/56287/enrollment_profiles/103177",
+   "lastVisited": "Nov 02 2026",
+   "wage": 16.0,
+   "hours": 20,
+   "tips": false,
+   "SW": [
+    "2027-03-01",
+    "2027-07-31"
+   ],
+   "FW": [
+    "2027-09-05",
+    "2027-11-30"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "综合酒店岗综合酒店岗(红线:洗衣/客房/后厨/前台轮岗)",
+    "到岗 03/01–07/31（未设到岗线，不判定）",
+    "离岗 09/05–11/30（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "C",
+   "slug": "99513",
+   "title": "Hospitality Crew",
+   "employer": "Courtyard by Marriott Niagara Falls",
+   "location": "Niagara Falls, NY · Mid-Atlantic",
+   "href": "/wt/employers/54983/enrollment_profiles/99513",
+   "lastVisited": "Nov 02 2026",
+   "wage": 16.0,
+   "hours": 20,
+   "tips": false,
+   "SW": [
+    "2027-03-01",
+    "2027-07-31"
+   ],
+   "FW": [
+    "2027-09-08",
+    "2027-11-30"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "综合酒店岗综合酒店岗(红线:洗衣/客房/后厨/前台轮岗)",
+    "到岗 03/01–07/31（未设到岗线，不判定）",
+    "离岗 09/08–11/30（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "100630",
+   "title": "Bus Person",
+   "employer": "Fisherman’s Catch Restaurant",
+   "location": "Wells, ME · New England",
+   "href": "/wt/employers/312/enrollment_profiles/100630",
+   "lastVisited": "Nov 03 2026",
+   "wage": 17.5,
+   "hours": 32,
+   "tips": true,
+   "SW": [
+    "2027-05-10",
+    "2027-06-15"
+   ],
+   "FW": [
+    "2027-08-30",
+    "2027-10-15"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "实为清桌员(排除)",
+    "到岗 05/10–06/15（未设到岗线，不判定）",
+    "离岗 08/30–10/15（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "105797",
+   "title": "Hospitality Crew",
+   "employer": "The Flanders Hotel",
+   "location": "Ocean City, NJ · Mid-Atlantic",
+   "href": "/wt/employers/14952/enrollment_profiles/105797",
+   "lastVisited": "Nov 03 2026",
+   "wage": 16.48,
+   "hours": 36,
+   "tips": false,
+   "SW": [
+    "2027-06-12",
+    "2027-07-01"
+   ],
+   "FW": [
+    "2027-09-13",
+    "2027-10-31"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "Assisted",
+   "reasons": [
+    "实为客房保洁(排除)",
+    "到岗 06/12–07/01（未设到岗线，不判定）",
+    "离岗 09/13–10/31（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "104979",
+   "title": "Barista",
+   "employer": "Summit Lake Lodge Inc.",
+   "location": "Moose Pass, AK · Alaska",
+   "href": "/wt/employers/2395/enrollment_profiles/104979",
+   "lastVisited": "Nov 02 2026",
+   "wage": 14.0,
+   "hours": 40,
+   "tips": true,
+   "SW": [
+    "2027-05-15",
+    "2027-06-23"
+   ],
+   "FW": [
+    "2027-08-25",
+    "2027-09-15"
+   ],
+   "rent": 98.0,
+   "share": "7",
+   "housing": "Provided",
+   "reasons": [
+    "实为洗碗工(排除)",
+    "到岗 05/15–06/23（未设到岗线，不判定）",
+    "离岗 08/25–09/15（未设离岗线，不判定）",
+    "住宿 7 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "101831",
+   "title": "Server Assistant",
+   "employer": "Su Casa",
+   "location": "South Haven, MI · Midwest",
+   "href": "/wt/employers/58168/enrollment_profiles/101831",
+   "lastVisited": "Nov 02 2026",
+   "wage": 14.0,
+   "hours": 32,
+   "tips": false,
+   "SW": [
+    "2027-04-24",
+    "2027-06-20"
+   ],
+   "FW": [
+    "2027-09-06",
+    "2027-10-01"
+   ],
+   "rent": 95.0,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "实为后厨帮工(排除)",
+    "到岗 04/24–06/20（未设到岗线，不判定）",
+    "离岗 09/06–10/01（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "101566",
+   "title": "Public Area Attendant",
+   "employer": "Nantahala Outdoor Center",
+   "location": "Bryson City, NC · South",
+   "href": "/wt/employers/9216/enrollment_profiles/101566",
+   "lastVisited": "Nov 03 2026",
+   "wage": 13.0,
+   "hours": 45,
+   "tips": false,
+   "SW": [
+    "2027-03-20",
+    "2027-07-10"
+   ],
+   "FW": [
+    "2027-07-11",
+    "2027-10-16"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "实为公共区域保洁(排除)",
+    "到岗 03/20–07/10（未设到岗线，不判定）",
+    "离岗 07/11–10/16（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "102029",
+   "title": "Food and Beverage Assistant",
+   "employer": "Waterfront",
+   "location": "Sister Bay, WI · Midwest",
+   "href": "/wt/employers/10383/enrollment_profiles/102029",
+   "lastVisited": "Nov 02 2026",
+   "wage": 11.0,
+   "hours": 30,
+   "tips": true,
+   "SW": [
+    "2027-05-12",
+    "2027-07-06"
+   ],
+   "FW": [
+    "2027-09-03",
+    "2027-11-03"
+   ],
+   "rent": 125.0,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "实为备菜(排除)",
+    "到岗 05/12–07/06（未设到岗线，不判定）",
+    "离岗 09/03–11/03（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "99733",
+   "title": "Food and Beverage Assistant",
+   "employer": "Two Mile Landing Restaurants And Marina",
+   "location": "Wildwood, NJ · Mid-Atlantic",
+   "href": "/wt/employers/3233/enrollment_profiles/99733",
+   "lastVisited": "Nov 02 2026",
+   "wage": 6.05,
+   "hours": 35,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-07-01"
+   ],
+   "FW": [
+    "2027-08-30",
+    "2027-10-15"
+   ],
+   "rent": null,
+   "share": "4",
+   "housing": "Provided",
+   "reasons": [
+    "实为传菜打杂(排除)",
+    "到岗 05/01–07/01（未设到岗线，不判定）",
+    "离岗 08/30–10/15（未设离岗线，不判定）",
+    "住宿 4 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "103688",
+   "title": "Bus Person",
+   "employer": "Bubba's Bar-B-Que",
+   "location": "Cody, WY · Rocky Mountains",
+   "href": "/wt/employers/13628/enrollment_profiles/103688",
+   "lastVisited": "Nov 02 2026",
+   "wage": 5.25,
+   "hours": 38,
+   "tips": true,
+   "SW": [
+    "2027-05-01",
+    "2027-07-07"
+   ],
+   "FW": [
+    "2027-08-29",
+    "2027-10-31"
+   ],
+   "rent": null,
+   "share": "2",
+   "housing": "Provided",
+   "reasons": [
+    "实为清桌员(排除)",
+    "到岗 05/01–07/07（未设到岗线，不判定）",
+    "离岗 08/29–10/31（未设离岗线，不判定）",
+    "住宿 2 人/间（未设住宿线，不判定）"
+   ]
+  },
+  {
+   "tier": "X",
+   "slug": "105140",
+   "title": "Bartender",
+   "employer": "Omega Eats",
+   "location": "Ocean City, MD · Mid-Atlantic",
+   "href": "/wt/employers/56907/enrollment_profiles/105140",
+   "lastVisited": "Nov 03 2026",
+   "wage": 3.63,
+   "hours": 35,
+   "tips": true,
+   "SW": [
+    "2027-05-08",
+    "2027-06-25"
+   ],
+   "FW": [
+    "2027-09-04",
+    "2027-10-15"
+   ],
+   "rent": null,
+   "share": "",
+   "housing": "",
+   "reasons": [
+    "实为备菜(排除)",
+    "到岗 05/08–06/25（未设到岗线，不判定）",
+    "离岗 09/04–10/15（未设离岗线，不判定）",
+    "住宿人数未标注(待公布)"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SWT 选岗工作台</title>
+<link rel="stylesheet" href="style.css">
+<style>
+.tabs {{ display:flex; gap:8px; margin-bottom:28px; }}
+.tab {{ border:1px solid var(--line); background:var(--card); color:var(--fg2);
+        padding:9px 22px; border-radius:var(--radius-s); cursor:pointer; font-size:13.5px;
+        font-weight:500; box-shadow:var(--shadow); font-family:inherit; }}
+.tab.on {{ background:var(--fg); color:var(--card); border-color:var(--fg); }}
+.drop {{ border:1.5px dashed var(--line); border-radius:var(--radius); padding:26px;
+        text-align:center; color:var(--muted); font-size:13px; cursor:pointer; transition:.15s; }}
+.drop:hover, .drop.on {{ border-color:var(--accent2); color:var(--accent2); background:var(--accent2-soft); }}
+.drop.done {{ border-style:solid; border-color:var(--tier-a); color:var(--tier-a); background:var(--tier-a-soft); }}
+.hint {{ color:var(--muted); font-size:12px; line-height:1.9; margin:14px 0 0; }}
+.hint code {{ background:var(--bg); border:1px solid var(--line); border-radius:6px;
+             padding:1px 7px; font-size:11.5px; color:var(--fg2); }}
+.fsec {{ margin-top:28px; }}
+.fsec h4 {{ font-size:14px; font-weight:600; margin:0 0 4px; }}
+.fsec .fsub {{ font-size:12px; color:var(--muted); margin:0 0 14px; line-height:1.8; }}
+.form-grid {{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px 18px; }}
+@media (max-width:720px) {{ .form-grid {{ grid-template-columns:1fr; }} }}
+.frow {{ display:flex; flex-direction:column; gap:6px; }}
+.frow label {{ font-size:12px; color:var(--fg2); font-weight:500; }}
+.frow input[type=text], .frow input[type=number], .frow input[type=date], .frow textarea {{
+  background:var(--bg); border:1px solid var(--line); border-radius:var(--radius-s);
+  padding:9px 12px; font:inherit; font-size:13.5px; color:var(--fg); }}
+.frow textarea {{ min-height:74px; resize:vertical; }}
+.frow input:focus, .frow textarea:focus {{ outline:none; border-color:var(--accent2); }}
+.frow .fhelp {{ font-size:11.5px; color:var(--muted); }}
+.pick-grid {{ display:flex; flex-wrap:wrap; gap:7px; }}
+.pick {{ display:inline-flex; align-items:center; border:1px solid var(--line); background:var(--card);
+        color:var(--fg2); border-radius:999px; padding:5px 13px; font-size:12.5px; cursor:pointer;
+        font-family:inherit; transition:.12s; }}
+.pick:hover {{ border-color:var(--muted); }}
+.pick.on {{ background:var(--accent); border-color:var(--accent); color:var(--on-accent); }}
+.pick-grid.states .pick {{ min-width:46px; justify-content:center; padding:5px 9px; }}
+.chk-grid {{ display:flex; flex-wrap:wrap; gap:8px 20px; }}
+.chk {{ display:flex; align-items:center; gap:7px; font-size:13px; color:var(--fg2); cursor:pointer; }}
+.chk input {{ accent-color:var(--accent); width:15px; height:15px; }}
+.preset-row {{ display:flex; flex-wrap:wrap; gap:7px; margin-bottom:12px; }}
+.preset {{ border:1px solid var(--line); background:var(--card); color:var(--fg2);
+          border-radius:var(--radius-s); padding:6px 14px; font-size:12.5px; cursor:pointer; font-family:inherit; }}
+.preset.on {{ border-color:var(--accent2); color:var(--accent2); background:var(--accent2-soft); }}
+.note-warn {{ font-size:12px; color:var(--muted); line-height:1.8; }}
+.note-warn b {{ color:var(--tier-b); }}
+.export-bar {{ position:sticky; bottom:14px; display:flex; gap:10px; align-items:center;
+  background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow-lg);
+  border-radius:var(--radius); padding:14px 18px; margin-top:26px; flex-wrap:wrap; z-index:5; }}
+.export-bar .eb-title {{ font-size:12px; color:var(--muted); margin-right:auto; line-height:1.6; }}
+.btn2 {{ display:inline-flex; align-items:center; border:none; background:var(--accent); color:var(--on-accent);
+        font-size:13px; font-weight:500; padding:9px 16px; border-radius:var(--radius-s);
+        cursor:pointer; font-family:inherit; box-shadow:0 2px 4px hsl(240 30% 25% / .18); }}
+.btn2:hover {{ background:var(--accent-hover); }}
+.btn2.ghost {{ background:var(--card); color:var(--fg2); border:1px solid var(--line); box-shadow:none; }}
+.btn2.ghost:hover {{ border-color:var(--muted); color:var(--fg); }}
+.btn2.ok {{ background:var(--tier-a); color:var(--on-accent); }}
+#report-area {{ animation:pop .25s ease; }}
+@keyframes pop {{ from {{ opacity:0; transform:translateY(8px); }} to {{ opacity:1; transform:none; }} }}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page-head">
+    <div>
+      <h1>SWT 选岗工作台</h1>
+      <p class="page-sub">InterExchange Work &amp; Travel · 设置一次，之后每次筛查把结果 JSON 拖进来在线看报告</p>
+    </div>
+    <div class="head-actions">
+      <button class="theme-btn" id="theme-btn" aria-label="切换明暗主题"></button>
+    </div>
+  </header>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab on" data-tab="report">📊 报告</button>
+    <button class="tab" data-tab="setup">⚙️ 设置</button>
+  </nav>
+
+  <!-- ============ 报告页 ============ -->
+  <div id="tab-report">
+    <section class="card">
+      <div class="card-head"><h3>载入筛查结果</h3><span class="card-sub">screen.py 输出的 screen_result.json</span></div>
+      <div class="drop" id="drop-result">把 screen_result.json 拖到这里，或点击选择文件</div>
+      <input type="file" id="file-result" accept=".json" hidden>
+      <div class="card-head" style="margin-top:22px"><h3>载入历轮记录（可选）</h3><span class="card-sub">history.py 维护的 screening_history.json，用于渲染历轮筛查记录表</span></div>
+      <div class="drop" id="drop-history">把 screening_history.json 拖到这里，或点击选择文件</div>
+      <input type="file" id="file-history" accept=".json" hidden>
+      <button class="btn2 ghost" id="btn-demo" style="margin-top:18px">🎬 直接加载演示数据（无需文件）</button>
+      <p class="hint">还没有结果文件？在 Claude Code 里跑 <code>python3 scripts/screen.py config.yaml 数据.json screen_result.json</code> 生成。邮件草稿会用「设置」页的档案自动填充。</p>
+    </section>
+    <div id="report-area"></div>
+  </div>
+
+  <!-- ============ 设置页 ============ -->
+  <div id="tab-setup" hidden>
+
+    <section class="card">
+      <div class="card-head"><h3>个人档案</h3><span class="card-sub">填一次，之后每次筛查和每封求职邮件都自动引用（导出为 profile.yaml）</span></div>
+
+      <div class="fsec" style="margin-top:0">
+        <h4>基本信息</h4>
+        <div class="form-grid">
+          <div class="frow"><label>姓名</label><input type="text" id="p-name" placeholder="你的姓名"></div>
+          <div class="frow"><label>邮箱（求职邮件用它联系你）</label><input type="text" id="p-email" placeholder="you@email.com"></div>
+          <div class="frow"><label>电话（可选）</label><input type="text" id="p-phone" placeholder="+1 …"></div>
+          <div class="frow"><label>WhatsApp（可选）</label><input type="text" id="p-whatsapp" placeholder="+1 …"></div>
+          <div class="frow"><label>学校</label><input type="text" id="p-school" placeholder="Shanghai University of Sport"></div>
+          <div class="frow"><label>专业</label><input type="text" id="p-major" placeholder="Sports Rehabilitation"></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>日期（硬约束）</h4>
+        <div class="form-grid">
+          <div class="frow"><label>计划到岗日</label><input type="date" id="p-arrival"></div>
+          <div class="frow"><label>离岗日</label><input type="date" id="p-departure"></div>
+          <div class="frow"><label>自我介绍视频链接（可选）</label><input type="text" id="p-video" placeholder="https://youtu.be/…"></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>相关工作经历与优势（每行一条，会写进求职邮件）</h4>
+        <div class="frow">
+          <textarea id="p-exp" placeholder="campus ambassador / sales experience at New Oriental&#10;event operations internship at Shanghai Marathon"></textarea>
+          <span class="fhelp">留空则邮件里不放经历段。</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>筛选口径</h3><span class="card-sub">全部由你设置 · 留空 = 该维度不判定 · 导出为 config.yaml</span></div>
+
+      <div class="fsec" style="margin-top:0">
+        <h4>出发年份与到岗</h4>
+        <p class="fsub">岗位到岗窗口结束日 ≥ 计划到岗日 → 到岗 OK；早于计划日但 ≥ 最早可接受日 → 标注「需提前到岗」；更早 → 排除。</p>
+        <div class="form-grid">
+          <div class="frow"><label>计划出发年份（雇主须在此年登录过）</label><input type="number" id="c-year" min="2025" max="2035" placeholder="2027"></div>
+          <div class="frow"><label>计划到岗日</label><input type="date" id="c-arr"></div>
+          <div class="frow"><label>最早可接受到岗日（可选）</label><input type="date" id="c-acc"></div>
+          <div class="frow"><label>冬季岗（9 月后到岗）</label><label class="chk"><input type="checkbox" id="c-winter"> 排除冬季岗</label></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>离岗</h4>
+        <div class="form-grid">
+          <div class="frow"><label>最晚必须离岗日</label><input type="date" id="c-dep"></div>
+          <div class="frow"><label>离岗延到下一年的岗位</label><label class="chk"><input type="checkbox" id="c-offyear"> 排除</label></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>住宿</h4>
+        <p class="fsub">点一个预设档位自动填好下面三个数字，也可以手动改。</p>
+        <div class="preset-row" id="hou-presets">
+          <button class="preset" data-max="1" data-warn="2" data-excl="3">单人间优先</button>
+          <button class="preset" data-max="2" data-warn="3" data-excl="4">双人间可接受</button>
+          <button class="preset" data-max="3" data-warn="4" data-excl="5">3 人/间可接受</button>
+          <button class="preset" data-max="" data-warn="" data-excl="">不限</button>
+        </div>
+        <div class="form-grid">
+          <div class="frow"><label>可接受上限：≤ 几人/间</label><input type="number" id="c-rmax" min="1" max="10"></div>
+          <div class="frow"><label>≥ 几人/间 → 标注（B）</label><input type="number" id="c-rwarn" min="1" max="10"></div>
+          <div class="frow"><label>≥ 几人/间 → 排除（X）</label><input type="number" id="c-rexcl" min="1" max="10"></div>
+          <div class="frow"><label>周租金线（$，超过标注）</label><input type="number" id="c-rent" min="0" step="5"></div>
+        </div>
+        <div class="form-grid" style="margin-top:14px">
+          <div class="frow"><label>住房危机镇（旺季租房极难，如 Tahoe/Vail）</label><label class="chk"><input type="checkbox" id="c-crisis"> 必须有雇主住宿，否则标注</label></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>不想做的岗位</h4>
+        <p class="fsub">关键词命中「卡片标题或详情页职责文本」即生效：排除词 → X 排除；红线词 → C 红线（不推荐但可接受）。点选常用词，或在框里追加（每行一个，支持正则）。</p>
+        <div class="frow"><label>排除（X）</label></div>
+        <div class="pick-grid" id="c-kw-x"></div>
+        <div class="frow" style="margin-top:10px"><textarea id="c-kw-x-extra" placeholder="自定义排除词，每行一个，如：Valet"></textarea></div>
+        <div class="frow" style="margin-top:16px"><label>红线（C）</label></div>
+        <div class="pick-grid" id="c-kw-c"></div>
+        <div class="frow" style="margin-top:10px"><textarea id="c-kw-c-extra" placeholder="自定义红线词，每行一个"></textarea></div>
+      </div>
+
+      <div class="fsec">
+        <h4>薪资工时线</h4>
+        <div class="form-grid">
+          <div class="frow"><label>最低时薪（$，低于标注 B）</label><input type="number" id="c-wage" min="0" step="0.5"></div>
+          <div class="frow"><label>最低周工时（h，低于标注 B）</label><input type="number" id="c-hours" min="0" step="1"></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>地域</h4>
+        <p class="fsub">偏好州（点选，只影响同档排序）；排除州（点选，直接不进报告）；白名单可留空 = 不限。</p>
+        <div class="frow"><label>偏好州</label></div>
+        <div class="pick-grid states" id="c-prefer"></div>
+        <div class="frow" style="margin-top:12px"><label>排除州</label></div>
+        <div class="pick-grid states" id="c-exclude"></div>
+        <div class="frow" style="margin-top:12px"><label>白名单（州/区域/城市名，每行一个；留空 = 不限）</label><textarea id="c-allow" placeholder="如只想去加州和新英格兰：&#10;CA&#10;MA&#10;ME"></textarea></div>
+        <div class="frow" style="margin-top:12px"><label>孤岛 / 偏远镇</label><label class="chk"><input type="checkbox" id="c-island"> 一刀切排除（Nantucket / Key West / Mackinac 等）</label></div>
+      </div>
+
+      <div class="fsec">
+        <h4>报告与邮件</h4>
+        <div class="chk-grid">
+          <label class="chk"><input type="checkbox" id="c-report-contacts" checked> 报告带雇主联系方式</label>
+          <label class="chk"><input type="checkbox" id="c-report-drafts" checked> 报告带求职邮件草稿</label>
+          <label class="chk"><input type="checkbox" id="c-email-nq" checked> 邮件里不提问题（住宿细节等雇主回复后再谈）</label>
+          <label class="chk"><input type="checkbox" id="c-email-contact" checked> 邮件签名带联系方式</label>
+        </div>
+        <div class="form-grid" style="margin-top:14px">
+          <div class="frow"><label>邮件正文目标字数</label><input type="number" id="c-maxwords" min="40" max="400" value="120"></div>
+          <div class="frow"><label>邮件主题模板</label><input type="text" id="c-subject" value="Summer Position Application — {position} (InterExchange)"></div>
+        </div>
+        <div class="frow" style="margin-top:14px"><label>邮件结尾句（可选）</label><textarea id="c-closing">I am very interested in this position and would be glad to provide any additional information. I look forward to hearing from you.</textarea></div>
+      </div>
+    </section>
+
+    <div class="export-bar">
+      <span class="eb-title">自动保存在本机浏览器。<b>填完导出两个 yaml</b>，放进 skill 根目录，Claude Code 筛查时直接使用。</span>
+      <button class="btn2 ghost" id="btn-copy">📋 复制两个 yaml</button>
+      <button class="btn2 ghost" id="btn-dl-profile">下载 profile.yaml</button>
+      <button class="btn2 ok" id="btn-dl-config">下载 config.yaml</button>
+    </div>
+  </div>
+
+  <div class="foot">
+    评级：A 优先 · B 权衡（按条件标注）· C 红线（不推荐）· X 排除。判定顺序 X → C → B → A。<br>
+    ⚠ 陷阱警戒：IE 卡片标题常与详情页实岗不符，Apply 前必须核对详情页 Position Description 首句。<br>
+    工作台 = 查看与设置；数据抓取和分档判定由 swt-screener skill 的 Python 管线完成。
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script>
+(function () {
+"use strict";
+
+/* ================= 常量与数据 ================= */
+var TIER_META = {
+  A: ["A", "优先", "全部通过 · 可直接申请", "直接申请"],
+  B: ["B", "权衡", "有条件权衡 · 看标注决定", "按标注权衡"],
+  C: ["C", "红线", "不推荐 · 风险需自担", "不推荐"],
+  X: ["X", "排除", "命中硬性排除条件", "硬性排除"]
+};
+var TIER_ORDER = ["A", "B", "C", "X"];
+var WALL_TIERS = { A: 1, B: 1, C: 1 };
+var IE_BASE = "https://app.interexchange.org";
+var D = window.SITE_DATA || { contacts: {}, fallback: [], safety: {}, traps: null };
+var MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+var KW_EXCLUDE = [
+  "Cleaner","Cook","Dishwasher","Housekeeping","Kitchen Help","Lifeguard",
+  "Stock Clerk","Tent Installer","Groundskeeping","Maintenance","Campground Team Member",
+  "DISHWASH","HOUSEKEEP","JANITOR","KITCHEN",["COOK\\b","COOK"],["PREP\\b","PREP"],
+  "GROUNDSKEEP","GROUNDS","STOCKER","WAREHOUSE","PORTER","LABORER","STEWARD",
+  "CLEANING ROOMS","KITCHEN DUTY","PREP COOK","MOWING","GROUNDS KEEPING","COOKING"];
+var KW_REDLINE = [["LAUNDRY","LAUNDRY"],["LINEN","LINEN"],["VACUUM","VACUUM"],["CLEAN (THE )?(BATHROOM|SHOWER)","CLEAN BATHROOM"]];
+var STATES = ["AK","AL","AR","AZ","CA","CO","CT","DE","FL","GA","HI","IA","ID","IL","IN","KS","KY","LA","MA","MD","ME","MI","MN","MO","MS","MT","NC","ND","NE","NH","NJ","NM","NV","NY","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VA","VT","WA","WI","WV","WY"];
+
+/* ================= 工具 ================= */
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]; }); }
+function norm(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9]/g, ""); }
+function $(id) { return document.getElementById(id); }
+function v(id) { var el = $(id); return el ? el.value.trim() : ""; }
+function num(id) { var t = v(id); return t === "" ? null : Number(t); }
+function lines(id) { return v(id).split("\n").map(function (s) { return s.trim(); }).filter(Boolean); }
+function fmtMMDD(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ""); return m ? m[2] + "-" + m[3] : (iso || null); }
+function fmtWindow(w) {
+  if (!w) return "未标注";
+  var a = new Date(w[0] + "T00:00:00"), b = new Date(w[1] + "T00:00:00");
+  function p(d) { return (d.getMonth() + 1) + "/" + d.getDate(); }
+  return p(a) + "–" + p(b);
+}
+function fmtFull(iso) { var d = new Date(iso + "T00:00:00"); return MONTHS[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear(); }
+function fmtMdy(iso) { var d = new Date(iso + "T00:00:00"); return MONTHS[d.getMonth()] + " " + d.getDate(); }
+function absHref(h) { return h ? (h.indexOf("http") === 0 ? h : IE_BASE + h) : ""; }
+
+/* ================= 设置表单 ================= */
+function pickGrid(elId, opts) {
+  var box = $(elId);
+  opts.forEach(function (o) {
+    var pair = Array.isArray(o) ? o : [o, o];
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "pick"; b.textContent = pair[1];
+    b.dataset.val = pair[0];
+    b.addEventListener("click", function () { b.classList.toggle("on"); save(); });
+    box.appendChild(b);
+  });
+}
+function picked(elId) {
+  return Array.prototype.slice.call($(elId).querySelectorAll(".pick.on")).map(function (b) { return b.dataset.val; });
+}
+
+function collectProfile() {
+  return {
+    name: v("p-name"),
+    contact: { email: v("p-email"), phone: v("p-phone"), whatsapp: v("p-whatsapp") },
+    school: v("p-school"), major: v("p-major"), sponsor: "InterExchange",
+    arrival: v("p-arrival"), departure: v("p-departure"), video_url: v("p-video"),
+    experiences: lines("p-exp")
+  };
+}
+function collectCriteria() {
+  return {
+    season_year: num("c-year"),
+    arrival: {
+      priority_on_or_after: fmtMMDD(v("c-arr")),
+      acceptable_on_or_after: fmtMMDD(v("c-acc")),
+      reject_winter: $("c-winter").checked
+    },
+    departure: {
+      deadline: fmtMMDD(v("c-dep")),
+      reject_off_season_year: $("c-offyear").checked
+    },
+    housing: {
+      max_roommates: num("c-rmax"), warn_roommates: num("c-rwarn"),
+      exclude_roommates: num("c-rexcl"), max_rent_weekly: num("c-rent"),
+      crisis_towns_require_host_housing: $("c-crisis").checked
+    },
+    redline: {
+      free_text_exclude: picked("c-kw-x").concat(lines("c-kw-x-extra")),
+      free_text_redline: picked("c-kw-c").concat(lines("c-kw-c-extra"))
+    },
+    wage_hours: { min_wage: num("c-wage"), min_hours: num("c-hours") },
+    regions: {
+      allow: lines("c-allow"), exclude: picked("c-exclude"), prefer: picked("c-prefer"),
+      exclude_island_towns: $("c-island").checked
+    },
+    traps: { enabled: true },
+    report: {
+      format: "html", lang: "zh",
+      include_contacts: $("c-report-contacts").checked,
+      include_email_drafts: $("c-report-drafts").checked
+    },
+    history: { file: "screening_history.json", dedup: true },
+    email: {
+      enabled: true,
+      subject_template: v("c-subject") || "Summer Position Application — {position} (InterExchange)",
+      include_contact: $("c-email-contact").checked,
+      no_questions: $("c-email-nq").checked,
+      closing_line: v("c-closing"),
+      max_words: num("c-maxwords") || 120
+    },
+    tiering: { order: ["X", "C", "B", "A"], sort_by: ["wage_desc", "hours_desc", "rent_asc"] }
+  };
+}
+
+/* ---------- YAML 导出 ---------- */
+function yq(s) {
+  if (s === null || s === undefined) return "";
+  if (typeof s === "number") return String(s);
+  s = String(s);
+  if (s === "") return '""';
+  if (/^[\w .()+\-]{1,60}$/.test(s) && !/^-/.test(s)) return s;
+  return "'" + s.replace(/'/g, "''") + "'";
+}
+function ylist(items, indent) {
+  if (!items || !items.length) return indent + "[]";
+  return items.map(function (it) { return indent + "- " + yq(it); }).join("\n");
+}
+function exportProfileYaml() {
+  var p = collectProfile();
+  return [
+    "# swt-screener 个人档案（记忆模块）：首次填写后自动复用，邮件草稿自动引用。",
+    "name: " + yq(p.name),
+    "contact:",
+    "  email: " + yq(p.contact.email),
+    "  phone: " + yq(p.contact.phone),
+    "  whatsapp: " + yq(p.contact.whatsapp),
+    "school: " + yq(p.school),
+    "major: " + yq(p.major),
+    "sponsor: " + yq(p.sponsor),
+    "arrival: " + yq(p.arrival),
+    "departure: " + yq(p.departure),
+    "video_url: " + yq(p.video_url),
+    "experiences:",
+    ylist(p.experiences, "  ")
+  ].join("\n") + "\n";
+}
+function exportConfigYaml() {
+  var c = collectCriteria();
+  return [
+    "# swt-screener 配置：全部口径由你在工作台表单设置。空值 = 该维度不判定。",
+    "season_year: " + yq(c.season_year),
+    "",
+    "arrival:",
+    "  priority_on_or_after: " + yq(c.arrival.priority_on_or_after),
+    "  acceptable_on_or_after: " + yq(c.arrival.acceptable_on_or_after),
+    "  reject_winter: " + (c.arrival.reject_winter ? "true" : "false"),
+    "",
+    "departure:",
+    "  deadline: " + yq(c.departure.deadline),
+    "  reject_off_season_year: " + (c.departure.reject_off_season_year ? "true" : "false"),
+    "",
+    "housing:",
+    "  max_roommates: " + yq(c.housing.max_roommates),
+    "  warn_roommates: " + yq(c.housing.warn_roommates),
+    "  exclude_roommates: " + yq(c.housing.exclude_roommates),
+    "  max_rent_weekly: " + yq(c.housing.max_rent_weekly),
+    "  crisis_towns_require_host_housing: " + (c.housing.crisis_towns_require_host_housing ? "true" : "false"),
+    "",
+    "redline:",
+    "  free_text_exclude:",
+    ylist(c.redline.free_text_exclude, "    "),
+    "  free_text_redline:",
+    ylist(c.redline.free_text_redline, "    "),
+    "",
+    "wage_hours:",
+    "  min_wage: " + yq(c.wage_hours.min_wage),
+    "  min_hours: " + yq(c.wage_hours.min_hours),
+    "",
+    "regions:",
+    "  allow:",
+    ylist(c.regions.allow, "    "),
+    "  exclude: " + "[" + c.regions.exclude.map(yq).join(", ") + "]",
+    "  prefer: " + "[" + c.regions.prefer.map(yq).join(", ") + "]",
+    "  exclude_island_towns: " + (c.regions.exclude_island_towns ? "true" : "false"),
+    "",
+    "traps:",
+    "  enabled: true",
+    "",
+    "report:",
+    "  format: html",
+    "  lang: zh",
+    "  include_contacts: " + (c.report.include_contacts ? "true" : "false"),
+    "  include_email_drafts: " + (c.report.include_email_drafts ? "true" : "false"),
+    "",
+    "history:",
+    '  file: "screening_history.json"',
+    "  dedup: true",
+    "",
+    "email:",
+    "  enabled: true",
+    "  subject_template: " + yq(c.email.subject_template),
+    "  include_contact: " + (c.email.include_contact ? "true" : "false"),
+    "  no_questions: " + (c.email.no_questions ? "true" : "false"),
+    "  closing_line: " + yq(c.email.closing_line),
+    "  max_words: " + c.email.max_words,
+    "",
+    "tiering:",
+    "  order: [X, C, B, A]",
+    "  sort_by: [wage_desc, hours_desc, rent_asc]"
+  ].join("\n") + "\n";
+}
+function download(name, text) {
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type: "text/yaml;charset=utf-8" }));
+  a.download = name; a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ---------- 表单初始化与持久化 ---------- */
+var LS_P = "swt-wa-profile", LS_C = "swt-wa-criteria";
+function save() {
+  try {
+    localStorage.setItem(LS_P, JSON.stringify(collectProfile()));
+    localStorage.setItem(LS_C, JSON.stringify(collectCriteria()));
+  } catch (e) {}
+}
+function restore() {
+  try {
+    var p = JSON.parse(localStorage.getItem(LS_P) || "null");
+    var c = JSON.parse(localStorage.getItem(LS_C) || "null");
+    if (!p) return false;
+    ["name","email","phone","whatsapp","school","major","arrival","departure","video_url"].forEach(function (k) {
+      var el = $("p-" + k); if (el && p[k]) el.value = p[k];
+    });
+    if (p.contact) {
+      $("p-email").value = p.contact.email || "";
+      $("p-phone").value = p.contact.phone || "";
+      $("p-whatsapp").value = p.contact.whatsapp || "";
+    }
+    $("p-exp").value = (p.experiences || []).join("\n");
+    if (c) applyCriteria(c);
+    return true;
+  } catch (e) { return false; }
+}
+function applyCriteria(c) {
+  function set(id, val) { var el = $(id); if (el && val !== null && val !== undefined && val !== "") el.value = val; }
+  function chk(id, on) { $(id).checked = !!on; }
+  function pickSet(id, vals) {
+    $(id).querySelectorAll(".pick").forEach(function (b) {
+      b.classList.toggle("on", (vals || []).indexOf(b.dataset.val) >= 0);
+    });
+  }
+  var yr = c.season_year || 2027;
+  function toDate(mmdd) { return mmdd ? yr + "-" + mmdd : ""; }
+  set("c-year", c.season_year);
+  if (c.arrival) {
+    set("c-arr", toDate(c.arrival.priority_on_or_after));
+    set("c-acc", toDate(c.arrival.acceptable_on_or_after));
+    chk("c-winter", c.arrival.reject_winter);
+  }
+  if (c.departure) {
+    set("c-dep", toDate(c.departure.deadline));
+    chk("c-offyear", c.departure.reject_off_season_year);
+  }
+  if (c.housing) {
+    set("c-rmax", c.housing.max_roommates); set("c-rwarn", c.housing.warn_roommates);
+    set("c-rexcl", c.housing.exclude_roommates); set("c-rent", c.housing.max_rent_weekly);
+    chk("c-crisis", c.housing.crisis_towns_require_host_housing);
+  }
+  if (c.redline) {
+    var fr = c.redline.free_text_redline || [];
+    var fx = (c.redline.free_text_exclude || []).slice();
+    // 兼容旧版存档：positions / extra_positions / title_keywords 并入排除池
+    ["positions", "extra_positions", "title_keywords"].forEach(function (k) {
+      (c.redline[k] || []).forEach(function (w) { if (fx.indexOf(w) < 0) fx.push(w); });
+    });
+    fx = fx.filter(function (w) { return fr.indexOf(w) < 0; });  // 与红线池重复的词从宽归红线
+    function applyPool(elId, extraId, vals) {
+      var known = [], custom = [];
+      vals.forEach(function (w) {
+        var hit = false;
+        $(elId).querySelectorAll(".pick").forEach(function (b) { if (b.dataset.val === w) hit = true; });
+        (hit ? known : custom).push(w);
+      });
+      pickSet(elId, known);
+      set(extraId, custom.join("\n"));
+    }
+    applyPool("c-kw-x", "c-kw-x-extra", fx);
+    applyPool("c-kw-c", "c-kw-c-extra", fr);
+  }
+  if (c.wage_hours) { set("c-wage", c.wage_hours.min_wage); set("c-hours", c.wage_hours.min_hours); }
+  if (c.regions) {
+    pickSet("c-prefer", c.regions.prefer || []);
+    pickSet("c-exclude", c.regions.exclude || []);
+    set("c-allow", (c.regions.allow || []).join("\n"));
+    chk("c-island", c.regions.exclude_island_towns);
+  }
+  if (c.report) { chk("c-report-contacts", c.report.include_contacts !== false); chk("c-report-drafts", c.report.include_email_drafts !== false); }
+  if (c.email) {
+    chk("c-email-nq", c.email.no_questions !== false);
+    chk("c-email-contact", c.email.include_contact !== false);
+    set("c-maxwords", c.email.max_words);
+    set("c-subject", c.email.subject_template);
+    set("c-closing", c.email.closing_line);
+  }
+}
+function initForm() {
+  pickGrid("c-kw-x", KW_EXCLUDE);
+  pickGrid("c-kw-c", KW_REDLINE);
+  pickGrid("c-prefer", STATES.map(function (s) { return [s, s]; }));
+  pickGrid("c-exclude", STATES.map(function (s) { return [s, s]; }));
+  document.querySelectorAll("#hou-presets .preset").forEach(function (b) {
+    b.addEventListener("click", function () {
+      $("c-rmax").value = b.dataset.max; $("c-rwarn").value = b.dataset.warn;
+      $("c-rexcl").value = b.dataset.excl;
+      document.querySelectorAll("#hou-presets .preset").forEach(function (x) { x.classList.remove("on"); });
+      b.classList.add("on"); save();
+    });
+  });
+  document.querySelectorAll("#tab-setup input, #tab-setup textarea").forEach(function (el) {
+    el.addEventListener("change", save);
+    el.addEventListener("input", save);
+  });
+  var hasProfile = restore();
+  $("btn-dl-profile").addEventListener("click", function () { save(); download("profile.yaml", exportProfileYaml()); });
+  $("btn-dl-config").addEventListener("click", function () { save(); download("config.yaml", exportConfigYaml()); });
+  $("btn-copy").addEventListener("click", function () {
+    save();
+    var text = exportProfileYaml() + "\n===== 分割线：下面粘贴为 config.yaml =====\n\n" + exportConfigYaml();
+    (navigator.clipboard ? navigator.clipboard.writeText(text) : Promise.reject())
+      .then(function () { $("btn-copy").textContent = "✅ 已复制"; setTimeout(function () { $("btn-copy").innerHTML = "📋 复制两个 yaml"; }, 1600); })
+      .catch(function () { prompt("复制失败，请手动复制：", text); });
+  });
+  if (!hasProfile) switchTab("setup");   // 首次使用直接落在设置页
+}
+
+/* ================= 报告渲染 ================= */
+function payLine(job) {
+  if (job.wage === null || job.wage === undefined) return '<span class="miss">—</span>';
+  var s = "<b>$" + esc(job.wage) + "</b>/h";
+  if (job.tips) s += ' <span class="tip">+tip</span>';
+  if (job.hours !== null && job.hours !== undefined) s += '<span class="dim"> · ' + esc(job.hours) + 'h/周</span>';
+  return s;
+}
+function houLine(job) {
+  var s = "室友 " + (job.share ? esc(job.share) : "未标注");
+  if (job.rent !== null && job.rent !== undefined) s += ' <span class="dim">· 租金 $' + esc(job.rent) + '/周</span>';
+  return s;
+}
+function matchContact(employer) {
+  var emp = norm(employer);
+  var keys = Object.keys(D.contacts);
+  for (var i = 0; i < keys.length; i++) {
+    var base = norm(keys[i].split("(")[0]);
+    if (base && (emp.indexOf(base) >= 0 || base.indexOf(emp) >= 0)) return D.contacts[keys[i]];
+  }
+  return null;
+}
+function safetyChip(location) {
+  var loc = norm(location);
+  var keys = Object.keys(D.safety);
+  for (var i = 0; i < keys.length; i++) {
+    var k = norm(keys[i]);
+    if (k && loc.indexOf(k) >= 0) {
+      var s = D.safety[keys[i]];
+      return ' <span class="safety" title="' + esc(s.note || "") + '">安全 ' + esc(s.grade) + "</span>";
+    }
+  }
+  return "";
+}
+function contactHtml(job) {
+  var info = matchContact(job.employer);
+  if (info) {
+    var bits = [];
+    if (info.email) bits.push('<div class="cemail">' + esc(info.email) + "</div>");
+    if (info.phone) bits.push('<div class="cphone">' + esc(info.phone) + "</div>");
+    if (info.note) bits.push('<div class="cnote">' + esc(info.note) + "</div>");
+    return bits.length ? bits.join("") : '<span class="miss">无</span>';
+  }
+  return '<span class="miss">未收录</span><div class="chbody">' +
+    D.fallback.map(function (c) { return "· " + esc(c); }).join("<br>") + "</div>";
+}
+function deepLink() {
+  var c = JSON.parse(localStorage.getItem(LS_C) || "{}");
+  var q = [];
+  if (c.wage_hours && c.wage_hours.min_wage) q.push("q%5Bwage_gteq%5D=" + c.wage_hours.min_wage);
+  if (c.wage_hours && c.wage_hours.min_hours) q.push("q%5Bhours_gteq%5D=" + c.wage_hours.min_hours);
+  return "https://app.interexchange.org/wt/job_listings" + (q.length ? "?" + q.join("&") : "");
+}
+function getProfile() { try { return JSON.parse(localStorage.getItem(LS_P) || "null") || {}; } catch (e) { return {}; } }
+function getEmailCfg() { try { return (JSON.parse(localStorage.getItem(LS_C) || "{}").email) || {}; } catch (e) { return {}; } }
+
+function buildDraft(job) {
+  var p = getProfile(), e = getEmailCfg();
+  if (!p.name) return null;
+  var position = job.title || "this position";
+  var subject = (e.subject_template || "Summer Position Application — {position}").replace("{position}", position);
+  var arrivalPhrase = "as soon as the position requires";
+  if (p.arrival) {
+    if (job.SW) {
+      var winEnd = new Date(job.SW[1] + "T00:00:00"), arr = new Date(p.arrival + "T00:00:00");
+      if (winEnd < arr) arrivalPhrase = "by " + fmtMdy(job.SW[1]);
+      else arrivalPhrase = "by " + fmtFull(p.arrival) + " (or earlier if needed)";
+    } else arrivalPhrase = "by " + fmtFull(p.arrival);
+  }
+  var exps = p.experiences || [];
+  var expBlock = exps.length ? "My relevant experience:\n" + exps.map(function (x) { return "- " + x; }).join("\n") + "\n\n" : "";
+  var videoBlock = p.video_url ? "A short self-introduction video: " + p.video_url + "\n\n" : "";
+  var closing = e.closing_line || "";
+  var contactBlock = "";
+  if (e.include_contact !== false && p.contact) {
+    var cl = [];
+    if (p.contact.email) cl.push("Email: " + p.contact.email);
+    if (p.contact.phone) cl.push("Phone: " + p.contact.phone);
+    if (p.contact.whatsapp) cl.push("Whatsapp: " + p.contact.whatsapp);
+    if (cl.length) contactBlock = "\n" + cl.join("\n");
+  }
+  var body =
+    "Dear " + (job.employer || "") + " team,\n\n" +
+    "I am " + p.name + ", a " + p.major + " student at " + p.school + ", joining the J-1 Work & Travel program with " +
+    (p.sponsor || "InterExchange") + ". I would like to apply for the " + position + " position in " + (job.location || "") + ".\n\n" +
+    videoBlock + expBlock +
+    "I can arrive " + arrivalPhrase + " and stay through " + (p.departure ? fmtFull(p.departure) : "") + "." +
+    (closing ? " " + closing : "") + "\n\nBest regards,\n" + p.name + contactBlock;
+  return { subject: subject, body: body.replace(/\s+$/, "") };
+}
+function draftHtml(job) {
+  var d = buildDraft(job);
+  if (!d) {
+    return '<div class="msec"><div class="mlabel">求职邮件草稿</div>' +
+      '<div class="mval">先在「设置」页填好个人档案（姓名、日期、经历），草稿会自动生成。</div></div>';
+  }
+  return '<div class="msec"><div class="mlabel">求职邮件草稿 · 复制即用</div>' +
+    '<pre class="mpre">' + esc(d.subject) + "\n\n" + esc(d.body) + "</pre></div>";
+}
+
+function wallCard(i, job) {
+  var letter = TIER_META[job.tier][0];
+  var seenTag = job.seen ? ' <span class="seen-tag">沿用</span>' : "";
+  return '<div class="jcard t-' + job.tier + '" data-i="' + i + '">' +
+    '<div class="jhead"><span class="gcell t-' + job.tier + '">' + letter + "</span>" +
+    '<span class="jtitle">' + esc(job.title) + "</span>" + seenTag + "</div>" +
+    '<div class="jemp">' + esc(job.employer) + "</div>" +
+    '<div class="jloc">' + esc(job.location) + safetyChip(job.location) + "</div>" +
+    '<div class="jstats">' +
+    '<div class="js">' + payLine(job) + "</div>" +
+    '<div class="js">到岗 ' + fmtWindow(job.SW) + "</div>" +
+    '<div class="js">' + houLine(job) + "</div>" +
+    '<div class="js">离岗 ' + fmtWindow(job.FW) + "</div></div>" +
+    '<div class="jfoot"><span class="jhint">点击看理由 · 联系 · 草稿</span>' +
+    '<a class="j-ie" href="' + esc(absHref(job.href)) + '" target="_blank" rel="noopener">IE ↗</a></div></div>';
+}
+function wallCol(cards, rev, repeat, duration) {
+  var copies = "";
+  for (var i = 0; i < repeat; i++) copies += '<div class="mcopy">' + cards.join("") + "</div>";
+  return '<div class="mcol" style="--duration:' + duration + 's">' +
+    '<div class="mgroup' + (rev ? " mrev" : "") + '">' + copies + "</div></div>";
+}
+function modal(i, job) {
+  var letter = TIER_META[job.tier][0];
+  var reasons = (job.reasons || []).map(function (t) { return '<span class="chip">' + esc(t) + "</span>"; }).join("");
+  var last = job.lastVisited ? '<div class="msec"><div class="mlabel">雇主最近登录</div><div class="mval">' + esc(job.lastVisited) + "</div></div>" : "";
+  return '<div class="moverlay" id="mov-' + i + '" role="dialog" aria-modal="true"><div class="mcard">' +
+    '<div class="mhead"><span class="gcell t-' + job.tier + '">' + letter + "</span>" +
+    '<div class="mh-text"><div class="mtitle">' + esc(job.title) + "</div>" +
+    '<div class="memp">' + esc(job.employer) + " · " + esc(job.location) + "</div></div>" +
+    '<button class="mclose" aria-label="关闭">×</button></div>' +
+    '<div class="mstats"><div class="ms">' + payLine(job) + "</div>" +
+    '<div class="ms">到岗 ' + fmtWindow(job.SW) + "</div>" +
+    '<div class="ms">' + houLine(job) + "</div>" +
+    '<div class="ms">离岗 ' + fmtWindow(job.FW) + "</div></div>" +
+    '<div class="msec"><div class="mlabel">判定理由</div><div class="chips">' + reasons + "</div></div>" +
+    '<div class="msec"><div class="mlabel">联系方式</div>' + contactHtml(job) + "</div>" +
+    last + draftHtml(job) +
+    '<div class="mactions"><a class="cta" href="' + esc(absHref(job.href)) + '" target="_blank" rel="noopener">在 IE 打开 ↗</a>' +
+    '<span class="mhint">正式申请仍走 IE 站内 Apply</span></div></div></div>';
+}
+function xRows(job) {
+  var reasons = (job.reasons || []).map(function (t) { return '<span class="chip">' + esc(t) + "</span>"; }).join("");
+  return '<tr class="main t-X"><td class="c-grade"><span class="gcell t-X">X</span></td>' +
+    '<td class="c-job"><a class="title" href="' + esc(absHref(job.href)) + '" target="_blank" rel="noopener">' + esc(job.title) + "</a>" +
+    '<div class="emp">' + esc(job.employer) + "</div>" +
+    '<div class="loc">' + esc(job.location) + safetyChip(job.location) + "</div></td>" +
+    '<td class="c-pay">' + payLine(job) + "</td>" +
+    '<td class="c-win"><div>到岗 ' + fmtWindow(job.SW) + '</div><div class="sub">离岗 ' + fmtWindow(job.FW) + "</div></td>" +
+    '<td class="c-hou">' + houLine(job) + "</td>" +
+    '<td class="c-ct">' + contactHtml(job) + "</td>" +
+    '<td class="c-ie"><a class="ielink" href="' + esc(absHref(job.href)) + '" target="_blank" rel="noopener">IE ↗</a></td></tr>' +
+    '<tr class="extra"><td class="c-extra" colspan="7"><div class="reasons"><span class="rlabel">排除理由</span>' + reasons + "</div></td></tr>";
+}
+function histRows(rounds) {
+  var t = D.traps;
+  var sub = (rounds ? rounds.length : 0) + " 轮";
+  if (t) sub += " · 陷阱累计 " + t.total + " 处（排除向 " + t.exclude + "，截至 " + t.asof + "）";
+  var rows = "";
+  (rounds || []).slice().sort(function (a, b) { return (a.date || "") < (b.date || "") ? -1 : 1; }).forEach(function (r) {
+    var c = r.counts || {};
+    var cells = TIER_ORDER.map(function (tt) {
+      var n = c[tt] || 0;
+      return '<span class="hcell ' + (n ? "t-" + tt : "miss") + '">' + n + "</span>";
+    }).join("");
+    var traps = '<span class="miss">—</span>';
+    if (r.traps_added !== null && r.traps_added !== undefined) {
+      traps = "<b>" + esc(r.traps_added) + "</b>";
+      if (r.traps_exclude !== null && r.traps_exclude !== undefined) traps += '<div class="dim">排除向 ' + esc(r.traps_exclude) + "</div>";
+    }
+    var newCell = "<b>" + esc(r.new || 0) + "</b>";
+    if (r.carried) newCell += ' <span class="dim">+沿用 ' + esc(r.carried) + "</span>";
+    rows += '<tr class="main"><td class="c-date">' + esc(r.date || "—") + "</td><td>" + newCell +
+      "</td><td colspan='4'>" + cells + "</td><td>" + traps + "</td>" +
+      '<td class="c-note">' + esc(r.note || "—") + "</td></tr>";
+  });
+  return '<section class="card"><div class="card-head"><h3>历轮筛查记录</h3><span class="card-sub">' + esc(sub) + "</span></div>" +
+    '<div class="tablewrap"><table class="tt hist"><thead><tr><th>日期</th><th>新核查</th><th colspan="4">分档</th><th>陷阱新增</th><th>备注</th></tr></thead>' +
+    "<tbody>" + rows + "</tbody></table></div></section>";
+}
+
+var screenData = null, historyData = null;
+function renderReport() {
+  if (!screenData) return;
+  var data = screenData, jobs = data.jobs || [], counts = data.counts || {};
+  var statsHtml = TIER_ORDER.map(function (t) {
+    var m = TIER_META[t];
+    return '<div class="stat"><div class="stat-top"><span class="gcell t-' + t + '">' + m[0] + "</span>" +
+      '<span class="stat-label">' + m[1] + "</span></div>" +
+      '<div class="stat-num">' + (counts[t] || 0) + "</div>" +
+      '<div class="stat-cap">' + m[3] + "</div></div>";
+  }).join("");
+
+  var wallJobs = jobs.filter(function (j) { return WALL_TIERS[j.tier]; });
+  var cols = [[], [], []];
+  wallJobs.forEach(function (j, i) { cols[i % 3].push(j); });
+  var colHtml = [], modals = [];
+  cols.forEach(function (col, ci) {
+    var cards = col.map(function (j, k) { return wallCard(ci * 1000 + k, j); });
+    var repeat = Math.min(6, Math.max(2, Math.ceil(560 * 2.6 / Math.max(1, col.length * 190))));
+    var duration = Math.max(30, Math.round(col.length * 190 * 40 / 1900));
+    colHtml.push(wallCol(cards, ci === 1, repeat, duration));
+    col.forEach(function (j, k) { modals.push(modal(ci * 1000 + k, j)); });
+  });
+
+  var xJobs = jobs.filter(function (j) { return j.tier === "X"; });
+  var xSection = "";
+  if (xJobs.length) {
+    xSection = '<section class="card"><div class="tier-head"><span class="gcell t-X">X</span>' +
+      "<div><h2>排除</h2><p class='tier-sub'>" + TIER_META.X[2] + "</p></div>" +
+      '<span class="count">' + xJobs.length + " 岗</span></div>" +
+      '<div class="tablewrap"><table class="tt"><thead><tr><th class="c-grade">评级</th><th>岗位</th><th>薪资 · 工时</th>' +
+      "<th>到岗 · 离岗</th><th>住宿</th><th>联系</th><th></th></tr></thead><tbody>" +
+      xJobs.map(xRows).join("") + "</tbody></table></div></section>";
+  }
+
+  $("report-area").innerHTML =
+    '<section class="card"><div class="card-head"><h3>筛查结果</h3>' +
+    '<span class="card-sub">生成于 ' + esc(data.generated) + " · 共 " + jobs.length + " 岗</span></div>" +
+    '<div class="stats">' + statsHtml + "</div>" +
+    '<div style="margin-top:18px"><a class="cta" href="' + esc(deepLink()) + '" target="_blank" rel="noopener">在 IE 打开预筛列表 ↗</a></div></section>' +
+    (historyData ? histRows(historyData.rounds) : "") +
+    '<section class="card"><div class="card-head"><h3>岗位墙</h3>' +
+    '<span class="card-sub">A / B / C 共 ' + wallJobs.length + " 岗 · 悬停暂停 · 点击卡片看判定理由、联系方式与邮件草稿</span></div>" +
+    '<div class="stage"><div class="stage-inner">' + colHtml.join("") + "</div>" +
+    '<div class="fade fade-t"></div><div class="fade fade-b"></div>' +
+    '<div class="fade fade-l"></div><div class="fade fade-r"></div></div></section>' +
+    xSection + modals.join("");
+  $("report-area").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+/* ---------- 文件载入 ---------- */
+function bindDrop(dropId, fileId, onLoad, label) {
+  var drop = $(dropId), file = $(fileId);
+  drop.addEventListener("click", function () { file.click(); });
+  file.addEventListener("change", function () {
+    if (file.files[0]) readFile(file.files[0], onLoad, drop);
+  });
+  ["dragover", "dragenter"].forEach(function (ev) {
+    drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add("on"); });
+  });
+  drop.addEventListener("dragleave", function () { drop.classList.remove("on"); });
+  drop.addEventListener("drop", function (e) {
+    e.preventDefault(); drop.classList.remove("on");
+    if (e.dataTransfer.files[0]) readFile(e.dataTransfer.files[0], onLoad, drop);
+  });
+}
+function readFile(f, onLoad, drop) {
+  var rd = new FileReader();
+  rd.onload = function () {
+    try {
+      onLoad(JSON.parse(rd.result));
+      drop.classList.add("done");
+      drop.textContent = "✅ 已载入 " + f.name;
+    } catch (e) {
+      alert("文件解析失败，请确认是 JSON 文件。");
+    }
+  };
+  rd.readAsText(f);
+}
+
+/* ---------- 主题 / 页签 / 弹窗 ---------- */
+function switchTab(name) {
+  document.querySelectorAll(".tab").forEach(function (t) { t.classList.toggle("on", t.dataset.tab === name); });
+  $("tab-report").hidden = name !== "report";
+  $("tab-setup").hidden = name !== "setup";
+  window.scrollTo(0, 0);
+}
+function initTheme() {
+  var btn = $("theme-btn");
+  var ICON_SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  var ICON_MOON = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>';
+  var cur = document.documentElement.getAttribute("data-theme");
+  if (!cur) { try { cur = localStorage.getItem("swt-theme"); } catch (e) {} }
+  if (cur) { document.documentElement.setAttribute("data-theme", cur); try { localStorage.setItem("swt-theme", cur); } catch (e) {} }
+  function isDark() {
+    var a = document.documentElement.getAttribute("data-theme");
+    if (a === "light") return false;
+    if (a === "dark") return true;
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function render() { btn.innerHTML = isDark() ? ICON_SUN : ICON_MOON; btn.title = isDark() ? "切换到浅色" : "切换到深色"; }
+  btn.addEventListener("click", function () {
+    var next = isDark() ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("swt-theme", next); } catch (e) {}
+    render();
+  });
+  render();
+}
+function initModals() {
+  document.addEventListener("click", function (e) {
+    var card = e.target.closest(".jcard");
+    if (card) { if (!e.target.closest(".j-ie")) showModal(card.getAttribute("data-i")); return; }
+    if (e.target.classList.contains("moverlay") || e.target.classList.contains("mclose")) hideModals();
+  });
+  document.addEventListener("keydown", function (e) { if (e.key === "Escape") hideModals(); });
+}
+function showModal(i) {
+  var m = $("mov-" + i);
+  if (m) { m.classList.add("on"); document.body.style.overflow = "hidden"; }
+}
+function hideModals() {
+  document.querySelectorAll(".moverlay.on").forEach(function (m) { m.classList.remove("on"); });
+  document.body.style.overflow = "";
+}
+
+/* ---------- 启动 ---------- */
+initForm();
+initTheme();
+initModals();
+document.querySelectorAll(".tab").forEach(function (t) {
+  t.addEventListener("click", function () { switchTab(t.dataset.tab); });
+});
+bindDrop("drop-result", "file-result", function (d) {
+  if (!d.jobs) throw new Error("no jobs");
+  screenData = d; renderReport();
+});
+bindDrop("drop-history", "file-history", function (d) {
+  historyData = d; renderReport();
+});
+$("btn-demo").addEventListener("click", function () {
+  Promise.all([
+    fetch("demo/screen_result.json").then(function (r) { return r.json(); }),
+    fetch("demo/screening_history.json").then(function (r) { return r.json(); })
+  ]).then(function (rs) {
+    screenData = rs[0]; historyData = rs[1]; renderReport();
+    var d1 = $("drop-result"); d1.classList.add("done"); d1.textContent = "✅ 演示数据：screen_result.json";
+    var d2 = $("drop-history"); d2.classList.add("done"); d2.textContent = "✅ 演示数据：screening_history.json";
+  }).catch(function () {
+    alert("演示数据加载失败：请确认 webapp/demo/ 目录存在（本仓库含演示数据）。");
+  });
+});
+})();
+</script>
+</body>
+</html>
