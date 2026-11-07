@@ -98,39 +98,6 @@
   <div id="tab-setup" hidden>
 
     <section class="card">
-      <div class="card-head"><h3>个人档案</h3><span class="card-sub">填一次，之后每次筛查和每封求职邮件都自动引用（导出为 profile.yaml）</span></div>
-
-      <div class="fsec" style="margin-top:0">
-        <h4>基本信息</h4>
-        <div class="form-grid">
-          <div class="frow"><label>姓名</label><input type="text" id="p-name" placeholder="你的姓名"></div>
-          <div class="frow"><label>邮箱（求职邮件用它联系你）</label><input type="text" id="p-email" placeholder="you@email.com"></div>
-          <div class="frow"><label>电话（可选）</label><input type="text" id="p-phone" placeholder="+1 …"></div>
-          <div class="frow"><label>WhatsApp（可选）</label><input type="text" id="p-whatsapp" placeholder="+1 …"></div>
-          <div class="frow"><label>学校</label><input type="text" id="p-school" placeholder="Shanghai University of Sport"></div>
-          <div class="frow"><label>专业</label><input type="text" id="p-major" placeholder="Sports Rehabilitation"></div>
-        </div>
-      </div>
-
-      <div class="fsec">
-        <h4>日期（硬约束）</h4>
-        <div class="form-grid">
-          <div class="frow"><label>计划到岗日</label><input type="date" id="p-arrival"></div>
-          <div class="frow"><label>离岗日</label><input type="date" id="p-departure"></div>
-          <div class="frow"><label>自我介绍视频链接（可选）</label><input type="text" id="p-video" placeholder="https://youtu.be/…"></div>
-        </div>
-      </div>
-
-      <div class="fsec">
-        <h4>相关工作经历与优势（每行一条，会写进求职邮件）</h4>
-        <div class="frow">
-          <textarea id="p-exp" placeholder="campus ambassador / sales experience at New Oriental&#10;event operations internship at Shanghai Marathon"></textarea>
-          <span class="fhelp">留空则邮件里不放经历段。</span>
-        </div>
-      </div>
-    </section>
-
-    <section class="card">
       <div class="card-head"><h3>筛选口径</h3><span class="card-sub">全部由你设置 · 留空 = 该维度不判定 · 导出为 config.yaml</span></div>
 
       <div class="fsec" style="margin-top:0">
@@ -215,6 +182,39 @@
           <div class="frow"><label>邮件主题模板</label><input type="text" id="c-subject" value="Summer Position Application — {position} (InterExchange)"></div>
         </div>
         <div class="frow" style="margin-top:14px"><label>邮件结尾句（可选）</label><textarea id="c-closing">I am very interested in this position and would be glad to provide any additional information. I look forward to hearing from you.</textarea></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h3>个人档案</h3><span class="card-sub">填一次，之后每次筛查和每封求职邮件都自动引用（导出为 profile.yaml）</span></div>
+
+      <div class="fsec" style="margin-top:0">
+        <h4>基本信息</h4>
+        <div class="form-grid">
+          <div class="frow"><label>姓名</label><input type="text" id="p-name" placeholder="你的姓名"></div>
+          <div class="frow"><label>邮箱（求职邮件用它联系你）</label><input type="text" id="p-email" placeholder="you@email.com"></div>
+          <div class="frow"><label>电话（可选）</label><input type="text" id="p-phone" placeholder="+1 …"></div>
+          <div class="frow"><label>WhatsApp（可选）</label><input type="text" id="p-whatsapp" placeholder="+1 …"></div>
+          <div class="frow"><label>学校</label><input type="text" id="p-school" placeholder="Shanghai University of Sport"></div>
+          <div class="frow"><label>专业</label><input type="text" id="p-major" placeholder="Sports Rehabilitation"></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>日期（硬约束）</h4>
+        <div class="form-grid">
+          <div class="frow"><label>计划到岗日</label><input type="date" id="p-arrival"></div>
+          <div class="frow"><label>离岗日</label><input type="date" id="p-departure"></div>
+          <div class="frow"><label>自我介绍视频链接（可选）</label><input type="text" id="p-video" placeholder="https://youtu.be/…"></div>
+        </div>
+      </div>
+
+      <div class="fsec">
+        <h4>相关工作经历与优势（每行一条，会写进求职邮件）</h4>
+        <div class="frow">
+          <textarea id="p-exp" placeholder="campus ambassador / sales experience at New Oriental&#10;event operations internship at Shanghai Marathon"></textarea>
+          <span class="fhelp">留空则邮件里不放经历段。</span>
+        </div>
       </div>
     </section>
 

@@ -11,8 +11,8 @@ contact:
 school: "你的学校"
 major: "你的专业"
 sponsor: "InterExchange"           # J-1 项目方
-arrival: "2027-06-01"              # 计划到岗日（YYYY-MM-DD）
-departure: "2027-09-15"            # 离岗日（YYYY-MM-DD，硬约束）
+arrival: ""                         # 计划到岗日（YYYY-MM-DD，如 2028-06-01）
+departure: ""                       # 离岗日（YYYY-MM-DD，硬约束）
 video_url: ""                      # 可选：自我介绍视频链接
 experiences:                       # 相关工作经历与优势（逐条，会写进求职邮件）
   - "示例：campus ambassador / sales experience"

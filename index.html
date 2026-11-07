@@ -3,49 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SWT 选岗 Agent · InterExchange Work &amp; Travel AI 选岗助手</title>
-<meta name="description" content="基于 Claude Code Skill 的 AI Agent 应用：按个人标准给 InterExchange Work & Travel 岗位分档，生成判定理由、求职邮件草稿与历轮追踪报告。开源。">
+<title>SWT 选岗助手 · InterExchange Work &amp; Travel 岗位筛选</title>
+<meta name="description" content="面向 InterExchange Work & Travel 学生的开源选岗助手：按自己设定的标准给岗位分四档，附判定理由、求职邮件草稿与历轮追踪。">
 <link rel="stylesheet" href="webapp/style.css">
 <style>
-.hero {{ text-align:center; padding:52px 10px 8px; }}
-.hero .badge {{ display:inline-block; font-size:12px; color:var(--accent2); border:1px solid var(--accent2);
-  border-radius:999px; padding:4px 14px; margin-bottom:18px; background:var(--accent2-soft); }}
-.hero h1 {{ font-size:34px; font-weight:800; margin:0 0 14px; letter-spacing:.5px; }}
-.hero h1 .grad {{ background:linear-gradient(120deg,var(--accent),var(--accent2));
-  -webkit-background-clip:text; background-clip:text; color:transparent; }}
-.hero .tag {{ color:var(--fg2); font-size:16px; line-height:1.9; max-width:640px; margin:0 auto 28px; }}
-.hero .ctas {{ display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }}
-.hero .cta.big {{ padding:12px 26px; font-size:14.5px; }}
-.flow {{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin:44px 0 6px; }}
-.flow .step {{ display:flex; align-items:center; gap:10px; background:var(--card); border:1px solid var(--line);
-  border-radius:var(--radius-s); padding:12px 18px; font-size:13px; color:var(--fg2); box-shadow:var(--shadow); }}
-.flow .step b {{ color:var(--fg); }}
-.flow .arrow {{ color:var(--muted); font-size:18px; align-self:center; }}
-.grid4 {{ display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:18px; }}
-.fcard {{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); }}
-.fcard .ico {{ font-size:24px; }}
-.fcard h4 {{ margin:10px 0 6px; font-size:14.5px; }}
-.fcard p {{ margin:0; font-size:12.5px; color:var(--fg2); line-height:1.8; }}
-.techlist {{ display:flex; flex-direction:column; gap:12px; margin-top:18px; }}
-.tech {{ display:flex; gap:14px; align-items:flex-start; }}
-.tech .n {{ flex:none; width:26px; height:26px; border-radius:8px; background:var(--accent-soft); color:var(--accent);
-  display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; }}
-.tech h4 {{ margin:2px 0 4px; font-size:14px; }}
-.tech p {{ margin:0; font-size:12.5px; color:var(--fg2); line-height:1.8; }}
-.demo-box {{ border:1.5px dashed var(--line); border-radius:var(--radius); padding:34px 20px; text-align:center;
-  color:var(--muted); font-size:13px; margin-top:18px; }}
-.demo-box b {{ color:var(--fg2); }}
-.comply {{ font-size:12px; color:var(--muted); line-height:1.9; margin-top:14px; }}
-.comply b {{ color:var(--fg2); }}
-@media (max-width:640px) {{ .hero h1 {{ font-size:26px; }} .flow .arrow {{ display:none; }} }}
+.hero { text-align:center; padding:52px 10px 8px; }
+.hero .badge { display:inline-block; font-size:12px; color:var(--accent2); border:1px solid var(--accent2);
+  border-radius:999px; padding:4px 14px; margin-bottom:18px; background:var(--accent2-soft); }
+.hero h1 { font-size:34px; font-weight:800; margin:0 0 14px; letter-spacing:.5px; }
+.hero h1 .grad { background:linear-gradient(120deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text; background-clip:text; color:transparent; }
+.hero .tag { color:var(--fg2); font-size:15.5px; line-height:2; max-width:660px; margin:0 auto 28px; }
+.hero .ctas { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+.hero .cta.big { padding:12px 26px; font-size:14.5px; }
+.grid4 { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:14px; margin-top:18px; }
+.fcard { background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); }
+.fcard .ico { font-size:24px; }
+.fcard h4 { margin:10px 0 6px; font-size:14.5px; }
+.fcard p { margin:0; font-size:12.5px; color:var(--fg2); line-height:1.8; }
+.steps { margin:18px 0 0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px; counter-reset:st; }
+.steps li { display:flex; gap:12px; align-items:flex-start; background:var(--card); border:1px solid var(--line);
+  border-radius:var(--radius-s); padding:12px 16px; font-size:13px; color:var(--fg2); line-height:1.9;
+  box-shadow:var(--shadow); counter-increment:st; }
+.steps li::before { content:counter(st); flex:none; width:24px; height:24px; border-radius:8px; background:var(--accent-soft);
+  color:var(--accent); display:flex; align-items:center; justify-content:center; font-weight:700; font-size:12.5px; margin-top:2px; }
+.steps b { color:var(--fg); }
+.demo-box { border:1.5px dashed var(--line); border-radius:var(--radius); padding:34px 20px; text-align:center;
+  color:var(--muted); font-size:13px; margin-top:18px; }
+.demo-box b { color:var(--fg2); }
+.comply { font-size:12px; color:var(--muted); line-height:1.9; margin-top:14px; }
+@media (max-width:640px) { .hero h1 { font-size:26px; } }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="page-head">
     <div>
-      <h1>SWT 选岗 Agent</h1>
-      <p class="page-sub">swt-screener · 开源 AI Agent 应用</p>
+      <h1>SWT 选岗助手</h1>
+      <p class="page-sub">swt-screener · 开源</p>
     </div>
     <div class="head-actions">
       <button class="theme-btn" id="theme-btn" aria-label="切换明暗主题"></button>
@@ -53,88 +48,61 @@
   </header>
 
   <section class="hero">
-    <span class="badge">Claude Code Skill · AI Agent 工作流 · 开源</span>
+    <span class="badge">InterExchange Work &amp; Travel · 开源</span>
     <h1>把<span class="grad">选岗这件麻烦事</span><br>交给一个 Agent</h1>
-    <p class="tag">InterExchange Work &amp; Travel 岗位筛选器：按你自设的标准给每个岗位分档（A 优先 / B 权衡 / C 红线 / X 排除），
-      输出判定理由、雇主联系方式、个性化求职邮件草稿与历轮追踪报告——数据采集到邮件定稿，全程由 AI Agent 陪跑。</p>
+    <p class="tag">面向参加 InterExchange Work &amp; Travel 项目的学生：按你自己设定的标准给每个岗位分四档
+      （A 优先 / B 权衡 / C 红线 / X 排除），每个岗位都附看得懂的判定理由、雇主联系方式、求职邮件草稿与历轮追踪记录。</p>
     <div class="ctas">
-      <a class="cta big" href="webapp/index.html">▶ 打开在线工作台</a>
+      <a class="cta big" href="webapp/index.html">▶ 直接体验演示</a>
       <a class="cta big ghost-btn" id="repo-link" href="#" target="_blank" rel="noopener">GitHub 仓库 ↗</a>
-    </div>
-    <div class="flow">
-      <div class="step"><b>1</b> 采集岗位数据</div><span class="arrow">→</span>
-      <div class="step"><b>2</b> 规则引擎分档</div><span class="arrow">→</span>
-      <div class="step"><b>3</b> 生成带理由的报告</div><span class="arrow">→</span>
-      <div class="step"><b>4</b> AI 个性化求职邮件</div><span class="arrow">→</span>
-      <div class="step"><b>5</b> 历轮追踪 · 只筛新卡</div>
     </div>
   </section>
 
   <section class="card">
-    <div class="card-head"><h3>核心功能</h3><span class="card-sub">每一步都有理由，每一轮都有记录</span></div>
+    <div class="card-head"><h3>它能做什么</h3><span class="card-sub">每一步都有理由，每一轮都有记录</span></div>
     <div class="grid4">
       <div class="fcard">
         <div class="ico">🎯</div>
         <h4>四档判定 · 每岗给理由</h4>
-        <p>A 优先 / B 权衡 / C 红线 / X 排除。每个岗位都列出命中哪条规则：日期窗口、住宿、薪资工时线、岗位红线、陷阱知识库——看得懂为什么进这档。</p>
+        <p>A 优先 / B 权衡 / C 红线 / X 排除。每个岗位都说明命中哪条规则：日期窗口、住宿、薪资工时线、岗位红线、陷阱库。</p>
       </div>
       <div class="fcard">
         <div class="ico">🧱</div>
-        <h4>3D 岗位墙 + 求职邮件草稿</h4>
-        <p>可考虑岗位以卡片墙呈现，点击即看判定理由、雇主联系方式与按你档案自动填充的英文求职邮件草稿，深链直达 IE 岗位页。</p>
+        <h4>岗位墙 + 邮件草稿</h4>
+        <p>可考虑岗位以卡片墙呈现，点击即看判定理由、雇主联系方式与按你档案自动填充的英文求职邮件草稿。</p>
       </div>
       <div class="fcard">
         <div class="ico">📈</div>
-        <h4>历轮筛查记录 · 只筛新卡</h4>
-        <p>每轮筛查自动记入历史：新核查 / 分档计数 / 陷阱新增 / 备注。已核查过的岗位自动标记「沿用」，例行筛查只处理新卡。</p>
+        <h4>历轮追踪 · 只筛新卡</h4>
+        <p>每次筛查自动记入历史，已看过的卡自动标记「沿用」，例行筛查只处理新岗位。</p>
       </div>
       <div class="fcard">
         <div class="ico">🕳️</div>
         <h4>陷阱知识库</h4>
-        <p>沉淀历轮踩坑：卡片标题与详情页实岗不符案例、城镇治安、雇主联系方式、住房危机镇——知识随使用持续增长，越用越准。</p>
+        <p>卡片标题与实岗不符、城镇治安、住房危机镇……踩过的坑沉淀进知识库，越用越准。</p>
       </div>
     </div>
   </section>
 
   <section class="card">
-    <div class="card-head"><h3>技术亮点</h3><span class="card-sub">为 AI 行业简历而生的架构叙事</span></div>
-    <div class="techlist">
-      <div class="tech">
-        <div class="n">1</div>
-        <div><h4>AI Agent 工作流（Claude Code Skill）</h4>
-        <p>以 Skill 生态封装完整 agent 流程：数据解析 → 规则引擎分档 → 报告生成 → 邮件个性化定稿 → 知识库维护，人机分工明确——确定性规则交给代码，创造性文案交给 AI。</p></div>
-      </div>
-      <div class="tech">
-        <div class="n">2</div>
-        <div><h4>知识库工程</h4>
-        <p>岗位实岗映射、城镇治安库、陷阱案例库、雇主联系方式库分层沉淀，可复用到任何 Work &amp; Travel 用户；知识更新有明确维护流程与单源同步机制（knowledge → webapp 数据快照）。</p></div>
-      </div>
-      <div class="tech">
-        <div class="n">3</div>
-        <div><h4>可复现评测基准</h4>
-        <p>历史筛查数据回放测试：任何规则改动先跑全量回放、逐岗比对档位，0-diff 才视为安全——把「改规则不改坏旧结论」做成工程约束。</p></div>
-      </div>
-      <div class="tech">
-        <div class="n">4</div>
-        <div><h4>全静态 Web 工作台</h4>
-        <p>零后端、零依赖：设置表单（点选式口径配置，导出 YAML）+ 报告渲染（拖入 JSON 在线看岗位墙与历轮表），GitHub Pages 即可托管，任何设备可用。</p></div>
-      </div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="card-head"><h3>在线演示</h3><span class="card-sub">无需安装，点开即用演示数据</span></div>
+    <div class="card-head"><h3>怎么用</h3><span class="card-sub">装好之后，每次筛查就是三条命令</span></div>
+    <ol class="steps">
+      <li><b>先试演示（零安装）</b>打开在线工作台，点「🎬 直接加载演示数据」——岗位墙、历轮表、排除表、邮件草稿的完整效果立刻可见。</li>
+      <li><b>安装 + 一次性设置</b>装好 Claude Code，克隆本仓库（唯一依赖 PyYAML），然后回答两轮问卷：个人档案（姓名 / 联系方式 / 到离岗日期 / 经历）和筛选口径（到岗窗口、住宿、岗位红线、薪资工时线……全部自己定）。</li>
+      <li><b>采集岗位数据</b>登录 IE，把看中的岗位详情页整理成 JSON（格式见仓库 references/input_schema.md），不做自动登录与批量爬取。</li>
+      <li><b>跑筛查</b>三条命令：分档 → 记录历轮 → 生成 HTML 报告。报告里有岗位墙、每岗判定理由、雇主联系方式、邮件草稿和 IE 深链。</li>
+      <li><b>挑岗 + 发邮件</b>挑中岗位后让 Claude 用你的档案个性化定稿邮件，正式申请一律走 IE 站内 Apply。</li>
+    </ol>
     <div class="demo-box">
-      <b>▶ 打开工作台 → 点「🎬 直接加载演示数据」</b><br>
-      即可看到岗位墙、历轮记录表、X 排除表与邮件草稿的完整效果<br>
+      <b>▶ 现在就想看看效果？</b><br>
+      打开在线工作台 → 点「🎬 直接加载演示数据」<br>
       <a class="cta" href="webapp/index.html" style="margin-top:14px;display:inline-flex">进入工作台</a>
     </div>
-    <p class="comply"><b>合规说明</b>：本项目不做 IE 自动登录与批量爬取；岗位数据由用户本人登录后手动采集。
-      判定与报告基于用户已见内容，正式申请一律走 IE 站内 Apply。项目为选岗辅助工具，与 InterExchange 无关联。</p>
+    <p class="comply">岗位数据由你本人登录后手动采集，判定基于你已见内容；正式申请走 IE 站内 Apply。项目为选岗辅助工具，与 InterExchange 无关联。</p>
   </section>
 
   <div class="foot">
-    swt-screener · 开源（MIT）· 一个把「个人标准 × AI Agent」做成产品的选岗实践
+    swt-screener · 开源（MIT）· InterExchange Work &amp; Travel 选岗助手
   </div>
 </div>
 
