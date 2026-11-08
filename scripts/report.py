@@ -6,14 +6,14 @@ swt-screener HTML 报告生成（Shadcn 风格 + 3D 岗位墙）
     python3 report.py <config.yaml> <screen_result.json> <report.html>
 
 报告内容:
-  - 头部 CTA（IE 预筛深链）+ 分档统计卡 + 筛选口径卡
+  - 分档统计卡（点击可按档筛选岗位墙）+ 筛选口径卡
   - 3D 岗位墙：A/B/C 岗做成倾斜舞台里的竖向滚动卡片列（悬停暂停）
     点击卡片弹出详情（判定理由 / 联系方式 / 邮件草稿 / IE 深链）
-  - X 排除档：紧凑表格（排除理由一眼可见，无草稿）
+  - X 排除档：紧凑表格（默认收起，点 X 统计卡展开；排除理由一眼可见，无草稿）
 联系方式来源: knowledge/contacts.yaml 命中 → 直接给；未收录 → 渠道建议。
 邮件草稿: A/B/C 档生成（X 排除档不生成）。
 """
-import sys, json, html, math, os, re, urllib.parse, datetime as dt
+import sys, json, html, math, os, re, datetime as dt
 from pathlib import Path
 
 IE_BASE = "https://app.interexchange.org"
@@ -72,16 +72,6 @@ def fmt_window(w):
         return "未标注"
     a, b = dt.date.fromisoformat(w[0]), dt.date.fromisoformat(w[1])
     return f"{a:%m/%d}–{b:%m/%d}"
-
-
-def deep_link(cfg):
-    params = {}
-    wh = cfg.get("wage_hours") or {}
-    if wh.get("min_wage"):
-        params["q[wage_gteq]"] = wh["min_wage"]
-    if wh.get("min_hours"):
-        params["q[hours_gteq]"] = wh["min_hours"]
-    return "https://app.interexchange.org/wt/job_listings?" + urllib.parse.urlencode(params)
 
 
 def pay_line(job):
@@ -292,6 +282,33 @@ def x_rows(job, contacts, fallback, towns):
 </tr>"""
 
 
+# ---------------- A/B/C 平面清单（点统计卡后替代岗位墙） ----------------
+
+def list_row(i, job, contacts, fallback, towns):
+    letter = TIER_META[job["tier"]][0]
+    ie = abs_href(job["href"])
+    reasons = "".join(f'<span class="chip">{esc(t)}</span>' for t in job["reasons"])
+    return f"""
+<tr class="main t-{job['tier']}" data-i="{i}">
+  <td class="c-grade"><span class="gcell t-{job['tier']}">{letter}</span></td>
+  <td class="c-job">
+    <span class="title">{esc(job['title'])}</span>
+    <div class="emp">{esc(job['employer'])}</div>
+    <div class="loc">{esc(job['location'])}{safety_chip(job, towns)}</div>
+  </td>
+  <td class="c-pay">{pay_line(job)}</td>
+  <td class="c-win"><div>到岗 {fmt_window(job['SW'])}</div><div class="sub">离岗 {fmt_window(job['FW'])}</div></td>
+  <td class="c-hou">{hou_line(job)}</td>
+  <td class="c-ct">{contact_html(job, contacts, fallback)}</td>
+  <td class="c-ie"><a class="ielink" href="{esc(ie)}" target="_blank" rel="noopener">IE ↗</a></td>
+</tr>
+<tr class="extra">
+  <td class="c-extra" colspan="7">
+    <div class="reasons"><span class="rlabel">判定理由</span>{reasons}</div>
+  </td>
+</tr>"""
+
+
 def main():
     cfg_path, in_path, out_path = sys.argv[1], sys.argv[2], sys.argv[3]
     root = Path(__file__).resolve().parent.parent
@@ -338,7 +355,7 @@ def main():
 
     counts = data["counts"]
     stats_html = "".join(f"""
-      <div class="stat">
+      <div class="stat" data-tier="{t}" tabindex="0" role="button" aria-label="查看 {zh} 档清单">
         <div class="stat-top"><span class="gcell t-{t}">{letter}</span><span class="stat-label">{zh}</span></div>
         <div class="stat-num">{counts.get(t, 0)}</div>
         <div class="stat-cap">{cap}</div>
@@ -351,6 +368,7 @@ def main():
         cols[i % 3].append(j)
     directions = [False, True, False]
     col_html, modals = [], []
+    wall_lists = {t: [] for t in WALL_TIERS}
     for ci, col in enumerate(cols):
         cards = [wall_card(ci * 1000 + k, j, towns) for k, j in enumerate(col)]
         repeat = min(6, max(2, math.ceil(STAGE_H * 2.6 / (len(col) * CARD_H))))
@@ -358,8 +376,23 @@ def main():
         duration = max(30, round(copy_h * 40 / 1900))
         col_html.append(wall_col(cards, directions[ci], repeat, duration))
         for k, j in enumerate(col):
-            modals.append(modal(ci * 1000 + k, j, contacts, fallback, towns, drafts.get(id(j))))
+            i = ci * 1000 + k
+            modals.append(modal(i, j, contacts, fallback, towns, drafts.get(id(j))))
+            wall_lists[j["tier"]].append(list_row(i, j, contacts, fallback, towns))
     wall_n = len(wall_jobs)
+    wall_lists_html = "".join(
+        f"""
+  <div class="wall-list" id="wall-list-{t}" hidden>
+    <div class="tablewrap"><table class="tt">
+      <thead><tr>
+        <th class="c-grade">评级</th><th>岗位</th><th>薪资 · 工时</th>
+        <th>到岗 · 离岗</th><th>住宿</th><th>联系</th><th></th>
+      </tr></thead>
+      <tbody>{"".join(rows)}</tbody>
+    </table></div>
+  </div>"""
+        for t, rows in wall_lists.items() if rows
+    )
 
     # ---- X 排除表 ----
     x_jobs = [j for j in jobs if j["tier"] == "X"]
@@ -367,7 +400,7 @@ def main():
     if x_jobs:
         rows = "".join(x_rows(j, contacts, fallback, towns) for j in x_jobs)
         x_section = f"""
-<section class="card">
+<section class="card" id="x-section" hidden>
   <div class="tier-head">
     <span class="gcell t-X">X</span>
     <div><h2>排除</h2><p class="tier-sub">{TIER_META['X'][2]}</p></div>
@@ -459,6 +492,22 @@ h1 {{ font-size:26px; font-weight:650; letter-spacing:-0.02em; margin:0; }}
 .stat-label {{ font-size:12.5px; color:var(--muted); font-weight:500; }}
 .stat-num {{ font-size:30px; font-weight:650; letter-spacing:-0.03em; margin-top:12px; line-height:1; }}
 .stat-cap {{ font-size:11.5px; color:var(--muted); margin-top:8px; }}
+.stat {{ cursor:pointer; user-select:none;
+        transition:transform .15s ease, box-shadow .15s ease, border-color .15s ease; }}
+.stat:hover, .stat:focus-visible {{ border-color:var(--accent2); transform:translateY(-2px);
+        box-shadow:var(--shadow-lg); outline:none; }}
+.stat.on {{ border-color:var(--accent2); background:var(--accent2-soft); }}
+.filter-hint {{ margin:-14px 0 24px; padding:10px 16px; border:1px dashed var(--accent2);
+        border-radius:var(--radius-s); background:var(--accent2-soft); color:var(--fg2); font-size:13px; }}
+.filter-hint b {{ color:var(--accent2); font-weight:700; }}
+.filter-hint .hint-clear {{ margin-left:10px; background:var(--accent2); color:#fff; border:0;
+        border-radius:6px; padding:3px 12px; font-size:12px; cursor:pointer; }}
+.filter-hint .hint-clear:hover {{ background:var(--accent); }}
+.wall-list tbody tr.main {{ cursor:pointer; }}
+.wall-list tbody tr.main:hover td {{ background:var(--accent2-soft); }}
+.wall-list tr.main.t-A td:first-child {{ background:var(--tier-a-soft); }}
+.wall-list tr.main.t-B td:first-child {{ background:var(--tier-b-soft); }}
+.wall-list tr.main.t-C td:first-child {{ background:var(--tier-c-soft); }}
 .gcell {{ width:28px; height:28px; border-radius:var(--radius-s); display:inline-flex; align-items:center;
          justify-content:center; font-weight:600; font-size:13.5px; flex:none; }}
 .gcell.t-A {{ background:var(--tier-a); color:var(--on-accent); }}
@@ -473,6 +522,14 @@ h1 {{ font-size:26px; font-weight:650; letter-spacing:-0.02em; margin:0; }}
 .chips {{ display:flex; flex-wrap:wrap; gap:8px; }}
 .chip {{ background:var(--bg); border:1px solid var(--line); border-radius:var(--radius-s);
         padding:4px 13px; font-size:12.5px; color:var(--fg2); }}
+.crit-note {{ margin-top:14px; border-top:1px dashed var(--line2); padding-top:10px; }}
+.crit-note summary {{ cursor:pointer; font-size:12.5px; color:var(--accent2); font-weight:500;
+        list-style:none; }}
+.crit-note summary:hover {{ color:var(--accent); }}
+.crit-note p {{ font-size:12.5px; color:var(--muted); line-height:1.9; margin:8px 0 0; }}
+.crit-note b {{ color:var(--fg2); }}
+.crit-note .cfg-path {{ background:var(--bg); border:1px solid var(--line); border-radius:6px;
+        padding:1px 8px; font-size:12px; color:var(--fg2); word-break:break-all; }}
 
 /* ---------- 3D 岗位墙 ---------- */
 .stage {{ position:relative; overflow:hidden; height:{STAGE_H}px; border:1px solid var(--line);
@@ -629,29 +686,34 @@ tr.extra td {{ background:var(--bg); border-bottom:1px solid var(--line2);
     </div>
     <div class="head-actions">
       <button class="theme-btn" id="theme-btn" aria-label="切换明暗主题"></button>
-      <a class="cta" href="{esc(deep_link(cfg))}" target="_blank" rel="noopener">在 IE 打开预筛列表 ↗</a>
     </div>
   </header>
 
   <section class="stats">{stats_html}</section>
+  <div class="filter-hint" id="filter-hint" hidden></div>
 
   <section class="card">
-    <div class="card-head"><h3>本次筛选口径</h3><span class="card-sub">config.yaml 当前值</span></div>
+    <div class="card-head"><h3>本次筛选口径</h3><span class="card-sub">config.yaml 当前值 · 生成时快照</span></div>
     <div class="chips">{chips_html}</div>
+    <details class="crit-note">
+      <summary>口径怎么改？</summary>
+      <p>报告里的口径是生成那一刻的<b>快照</b>，改口径有三条路：① 在 Claude Code 里直接说（如「时薪线改成 15」），改完重跑即生成新报告；② 直接编辑配置文件（每个字段带中文注释）：<code class="cfg-path">{esc(cfg_path)}</code>；③ 打开工作台 webapp/index.html 的表单点选后导出。新报告会自动体现新口径。</p>
+    </details>
   </section>
 
-  {hist_html}
-
-  <section class="card">
-    <div class="card-head"><h3>岗位墙</h3><span class="card-sub">A / B / C 共 {wall_n} 岗 · 悬停暂停 · 点击卡片看判定理由、联系方式与邮件草稿</span></div>
-    <div class="stage">
+  <section class="card" id="wall-section">
+    <div class="card-head"><h3>岗位墙</h3><span class="card-sub">A / B / C 共 {wall_n} 岗 · 点上方统计卡切换清单视图 · 悬停暂停 · 点击卡片看判定理由、联系方式与邮件草稿</span></div>
+    <div class="stage" id="stage">
       <div class="stage-inner">{''.join(col_html)}</div>
       <div class="fade fade-t"></div><div class="fade fade-b"></div>
       <div class="fade fade-l"></div><div class="fade fade-r"></div>
     </div>
+    {wall_lists_html}
   </section>
 
   {x_section}
+
+  {hist_html}
 
   {''.join(modals)}
 
@@ -676,6 +738,76 @@ tr.extra td {{ background:var(--bg); border-bottom:1px solid var(--line2);
     if (e.target.classList.contains('moverlay') || e.target.classList.contains('mclose')) hide();
   }});
   document.addEventListener('keydown', function (e) {{ if (e.key === 'Escape') hide(); }});
+}})();
+(function () {{
+  // 统计卡点选：A/B/C 把岗位墙切换成平面清单，X 展开排除表（默认收起）；再点同一张恢复岗位墙
+  var stats = document.querySelectorAll('.stat');
+  var hint = document.getElementById('filter-hint');
+  var xsec = document.getElementById('x-section');
+  var wallSec = document.getElementById('wall-section');
+  var stage = document.getElementById('stage');
+  var lists = document.querySelectorAll('.wall-list');
+  function apply(tier) {{
+    if (tier && tier === document.body.getAttribute('data-filter')) tier = null;
+    if (tier) {{ document.body.setAttribute('data-filter', tier); }}
+    else {{ document.body.removeAttribute('data-filter'); }}
+    stats.forEach(function (s) {{
+      s.classList.toggle('on', s.getAttribute('data-tier') === tier);
+    }});
+    // 先收起所有视图，再按当前档展开
+    if (wallSec) wallSec.hidden = false;
+    stage.hidden = false;
+    lists.forEach(function (l) {{ l.hidden = true; }});
+    if (xsec) xsec.hidden = true;
+    if (!tier) {{
+      hint.hidden = true; hint.innerHTML = '';
+      return;
+    }}
+    if (tier === 'X') {{
+      if (xsec) {{
+        if (wallSec) wallSec.hidden = true;
+        xsec.hidden = false;
+        var nx = xsec.querySelectorAll('tr.main').length;
+        hint.innerHTML = '当前显示 <b>X</b> 排除档 · ' + nx + ' 岗（再点一次收起）'
+          + ' <button class="hint-clear" type="button">恢复岗位墙</button>';
+        xsec.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+      }} else {{
+        hint.innerHTML = '<b>X</b> 排除档本轮无岗位（再点一次恢复岗位墙）';
+      }}
+      hint.hidden = false;
+      return;
+    }}
+    var list = document.getElementById('wall-list-' + tier);
+    if (!list) {{
+      hint.innerHTML = '<b>' + tier + '</b> 档本轮无岗位（再点一次恢复岗位墙）';
+      hint.hidden = false;
+      return;
+    }}
+    stage.hidden = true;
+    list.hidden = false;
+    var n = list.querySelectorAll('tr.main').length;
+    hint.innerHTML = '当前显示 <b>' + tier + '</b> 档清单 · ' + n + ' 岗 · 点击行看判定理由、联系与草稿'
+      + ' <button class="hint-clear" type="button">恢复岗位墙</button>';
+    hint.hidden = false;
+    hint.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+  }}
+  stats.forEach(function (s) {{
+    s.addEventListener('click', function () {{ apply(s.getAttribute('data-tier')); }});
+    s.addEventListener('keydown', function (e) {{
+      if (e.key === 'Enter' || e.key === ' ') {{ e.preventDefault(); apply(s.getAttribute('data-tier')); }}
+    }});
+  }});
+  hint.addEventListener('click', function (e) {{
+    if (e.target.classList.contains('hint-clear')) apply(null);
+  }});
+  // 清单行点击 → 弹出岗位详情（IE ↗ 链接除外）
+  document.addEventListener('click', function (e) {{
+    var row = e.target.closest('.wall-list tr.main');
+    if (row && !e.target.closest('.ielink')) {{
+      var m = document.getElementById('mov-' + row.getAttribute('data-i'));
+      if (m) {{ m.classList.add('on'); document.body.style.overflow = 'hidden'; }}
+    }}
+  }});
 }})();
 (function () {{
   var ICON_SUN = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';

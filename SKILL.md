@@ -16,9 +16,9 @@ description: 帮助 InterExchange (IE) Work & Travel 学生按自设标准筛选
 
 ## 工作流
 
-### 1. 首次使用：设置口径与档案（全部由用户自设，无任何默认口径）
+### 1. 首次使用：安装 + 设置口径与档案（全部由用户自设，无任何默认口径）
 
-新用户从模板起步：`cp config.template.yaml config.yaml`、`cp profile.template.yaml profile.yaml`。
+安装 skill 后（如 `~/.claude/skills/swt-screener/`），从模板起步：`cp config.template.yaml config.yaml`、`cp profile.template.yaml profile.yaml`。
 **所有筛选口径必须由用户自己设置**，skill 不提供任何「默认口径」；空值 = 该维度不启用，screen.py 自动跳过。
 
 **推荐路径：工作台网页表单**（`webapp/index.html`，浏览器直接打开）：
@@ -44,39 +44,27 @@ description: 帮助 InterExchange (IE) Work & Travel 学生按自设标准筛选
 
 详情页数据文件，格式见 `references/input_schema.md`。没有现成数据时，用浏览器登录 IE 后抓取（列表页卡片 + 每个候选岗详情页），关键字段是 `posdesc` 首句、start/finish 窗口、share/rent。
 
-### 3. 筛查分档
+### 3. 一条命令出报告
 
 ```bash
-python3 scripts/screen.py config.yaml <input.json> screen_result.json
+python3 scripts/run.py config.yaml <input.json>
 ```
 
-输出各档计数。与预期差异大时，检查输入数据字段与 config 口径。
+自动完成三步：分档筛查（**只筛新卡**：已核查的卡自动标记「沿用」，不再重复筛）→ 记录本轮历轮（幂等，同日重跑=覆盖该轮）→ 生成 HTML 报告并在浏览器打开。默认报告名 `report_YYYY-MM-DD.html`（输出到当前目录），也可加第 3 个参数指定输出名。
 
-**只筛新卡**：`history.dedup: true` 时，screen.py 读取历轮记录的 slug，已核查过的卡自动标记「沿用」（`seen`），不再重复筛。复盘/补录旧数据时加 `--date 2026-11-04` 把生成日期写成实际筛查日（默认写当天）。
+- 复盘/补录旧数据：命令末尾加 `--date 2026-11-04`（生成日期与报告名都用该日期）
+- 测试/CI：加 `--no-open` 不自动打开浏览器
+- 需要单独重跑某步时（调试）：`screen.py`（分档）→ `history.py record`（记历轮）→ `report.py`（出报告）
 
-### 3.5 记录本轮（历轮记录表数据源）
+报告内容：分档统计（**统计卡可点选：岗位墙 ⇄ 该档平面清单视图**）、**历轮筛查记录表**（报告末尾；自动更新：日期/新核查/A·B·C·X/陷阱新增/备注，陷阱累计从 `knowledge/traps.md` 头部解析）、3D 岗位墙（A/B/C，点卡片看判定理由/联系方式/邮件草稿，沿用卡带「沿用」标签，卡片内带该岗位的 IE 深链）、X 排除表（默认收起，点 X 统计卡展开）。邮件底稿由 `profile.yaml` + `assets/email_template.md` 自动生成。
 
-```bash
-python3 scripts/history.py record config.yaml screen_result.json   # 幂等：同日重跑=覆盖该轮
-```
-
-历轮 JSON 存 `history.file`，HTML 报告开头的「历轮筛查记录」表自动读取它。
-
-### 4. 生成 HTML 报告
-
-```bash
-python3 scripts/report.py config.yaml screen_result.json <报告.html>
-```
-
-报告内容：分档统计、**历轮筛查记录表**（自动更新：日期/新核查/A·B·C·X/陷阱新增/备注，陷阱累计从 `knowledge/traps.md` 头部解析）、3D 岗位墙（A/B/C，点卡片看判定理由/联系方式/邮件草稿，沿用卡带「沿用」标签）、X 排除表、IE 预筛深链。邮件底稿由 `profile.yaml` + `assets/email_template.md` 自动生成。
-
-### 5. 交付与邮件定稿（AI 逐雇主个性化）
+### 4. 交付与邮件定稿（AI 逐雇主个性化）
 
 - 报告里的草稿是**底稿**。用户挑中岗位后，AI 用 profile 记忆为**每个雇主**定稿：在底稿上加 1-2 句针对性内容（岗位特点 / 地点 / 用户与该雇主的匹配点），正文 ≤ `email.max_words` 词，简约明了。
 - 邮件口径全部按 `email` 配置：`no_questions`（默认不提问题，住宿细节等雇主回复后再谈）、`include_contact`（签名是否带联系方式）、`closing_line`。
 - 提醒：正式申请仍走 IE 站内 Apply。
 
-### 6. 知识库维护（每次筛查后）
+### 5. 知识库维护（每次筛查后）
 
 - `knowledge/traps.md`：新陷阱案例按表格式追加
 - `knowledge/towns.yaml`：新镇治安结论（注明来源与口径冲突）、新孤岛镇 / 住房危机镇

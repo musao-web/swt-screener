@@ -4,7 +4,7 @@
 
 - **A 优先 / B 权衡 / C 红线 / X 排除** 四档，每个岗位都写明「为什么进这档」
 - **3D 岗位墙**展示可考虑岗位（点卡片看理由、联系方式和邮件草稿），排除岗一目了然的表格
-- **历轮筛查记录表自动更新**：每次筛查记入历史（`history.py`），报告开头的历轮表自动累积日期/新核查/分档/陷阱/备注；已核查过的卡自动标记「沿用」，**只筛新卡**
+- **历轮筛查记录表自动更新**：每次筛查记入历史（`history.py`），报告末尾的历轮表自动累积日期/新核查/分档/陷阱/备注；已核查过的卡自动标记「沿用」，**只筛新卡**
 - **记忆模块**：个人档案问答一次、永久复用，之后每次筛查直接出结果
 - **陷阱警戒**：IE 列表页卡片标题常与详情页实岗不符（案例持续沉淀），推荐前必须核对详情页 Position Description 首句
 
@@ -20,16 +20,14 @@
 IE 详情页数据(手动采集)
    │
    ▼
-screen.py ──── config.yaml(个人口径) + knowledge/(岗位映射/城镇/陷阱/联系方式)
-   │              判定顺序 X → C → B → A，每岗列出命中理由
+run.py（一键：分档 → 记历轮 → 出报告，自动打开）
+   │  ├─ screen.py ──── config.yaml(个人口径) + knowledge/(岗位映射/城镇/陷阱/联系方式)
+   │  │                   判定顺序 X → C → B → A，每岗列出命中理由
+   │  └─ screen_result.json ──┬── history.py → screening_history.json(历轮，只筛新卡)
+   │                          ▼
+   │                   report.py → HTML 报告(统计/岗位墙·清单/X排除表/邮件草稿)
    ▼
-screen_result.json ──┬── history.py → screening_history.json(历轮，只筛新卡)
-                     │
-                     ▼
-              report.py → HTML 报告(统计/历轮表/3D岗位墙/X排除表/邮件草稿)
-                     │
-                     ▼
-              mailgen.py + profile.yaml → 邮件底稿 → AI 逐雇主个性化定稿
+mailgen.py + profile.yaml → 邮件底稿 → AI 逐雇主个性化定稿
 ```
 
 确定性规则（日期/住宿/薪资/红线/陷阱）由代码判定，创造性工作（邮件个性化、知识库维护）由 AI 完成。
@@ -45,20 +43,17 @@ pip install pyyaml   # Python 3.10+，唯一依赖
 1. **筛选口径**（写入 `config.yaml`）：到岗窗口、离岗约束、住宿、岗位红线、薪资工时线、地域等，逐维确认，留空 = 该维度不判定。
 2. **个人档案**（写入 `profile.yaml`，只问一次）：姓名、联系方式（邮箱/电话/WhatsApp）、学校、专业、到岗日/离岗日、相关工作经历与优势、可选自我介绍视频链接。说「更新我的档案」才会重新收集。
 
-准备好岗位数据后（格式见 `references/input_schema.md`，需登录 IE 抓取详情页）：
+准备好岗位数据后（格式见 `references/input_schema.md`，需登录 IE 抓取详情页），**一条命令出报告**：
 
 ```bash
-# 1. 筛查分档（history.dedup 开启时自动「只筛新卡」：已核查的卡标记沿用）
-python3 scripts/screen.py config.yaml <input.json> screen_result.json
-
-# 2. 记录本轮（幂等：同日重跑=覆盖该轮；历轮表数据源）
-python3 scripts/history.py record config.yaml screen_result.json
-
-# 3. 生成 HTML 报告（历轮记录表 + 3D 岗位墙 + 判定理由 + 联系方式 + 邮件草稿 + 深链）
-python3 scripts/report.py config.yaml screen_result.json <报告.html>
+python3 scripts/run.py config.yaml <input.json>
 ```
 
-复盘/补录旧数据时，第 1 步加 `--date 2026-11-04` 把生成日期写成实际筛查日。
+自动完成：筛查分档（history.dedup 开启时自动「只筛新卡」：已核查的卡标记沿用）→ 记录本轮（幂等：同日重跑=覆盖该轮）→ 生成 HTML 报告并在浏览器打开（默认 `report_YYYY-MM-DD.html`，也可加第 3 个参数指定输出名）。
+
+- 复盘/补录旧数据：命令末尾加 `--date 2026-11-04`（生成日期与报告名都用该日期）
+- 测试/CI：加 `--no-open` 不自动打开浏览器
+- 调试时也可逐步手动跑：`screen.py`（分档）→ `history.py record`（记历轮）→ `report.py`（出报告）
 
 报告里的邮件是**底稿**。挑中岗位后，让 Claude 用档案记忆为每个雇主定稿（加 1–2 句针对性内容，正文 ≤ `email.max_words` 词）。正式申请仍走 IE 站内 Apply。
 
@@ -91,7 +86,7 @@ python3 scripts/report.py config.yaml screen_result.json <报告.html>
 ## 历轮记录与只筛新卡
 
 - `config.history.file` 存历轮 JSON（`history.py` 维护）。每轮记录：日期、新核查卡数、沿用卡数、A/B/C/X 计数、全部新卡 slug、陷阱新增数（含排除向）、备注。
-- HTML 报告开头的「历轮筛查记录」表自动读取该文件渲染，新轮次跑完表自动多一行；陷阱累计数从 `knowledge/traps.md` 头部解析（单源，不重复维护）。
+- HTML 报告末尾的「历轮筛查记录」表自动读取该文件渲染，新轮次跑完表自动多一行；陷阱累计数从 `knowledge/traps.md` 头部解析（单源，不重复维护）。
 - `history.dedup: true` 时 `screen.py` 用历轮 slug 自动标记已核查卡为「沿用」——只筛新卡，例行筛查不用再手工比对快照。
 - 知识库维护后补写本轮要点：
 
@@ -117,6 +112,7 @@ swt-screener/
 ├── assets/
 │   └── email_template.md     # 求职邮件模板（简约底稿）
 ├── scripts/
+│   ├── run.py                # 一键管线（screen → history → report，自动打开报告）
 │   ├── screen.py             # 分档核心（读 config + knowledge → 结果 JSON；只筛新卡）
 │   ├── report.py             # HTML 报告（历轮记录表 / 3D 岗位墙 / 联系方式 / 邮件草稿 / 深链）
 │   ├── mailgen.py            # 邮件底稿填充（读 profile.yaml + 模板）
@@ -131,7 +127,7 @@ swt-screener/
 
 ## 自定义
 
-skill 不硬编码任何个人口径：换人使用时，替换 `profile.yaml`（档案）和 `config.yaml`（口径）即可，代码零改动。`knowledge/` 里的陷阱库、城镇库、联系方式库属于长期沉淀，建议随使用持续追加（SKILL.md 第 6 步）。
+skill 不硬编码任何个人口径：换人使用时，替换 `profile.yaml`（档案）和 `config.yaml`（口径）即可，代码零改动。`knowledge/` 里的陷阱库、城镇库、联系方式库属于长期沉淀，建议随使用持续追加（SKILL.md 第 5 步）。
 
 ## 隐私提醒
 

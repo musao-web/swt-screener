@@ -59,8 +59,8 @@ h1 { font-size:26px; font-weight:650; letter-spacing:-0.02em; margin:0; }
 .cta:hover { background:var(--accent-hover); }
 .theme-btn { display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px;
              border:1px solid var(--line); background:var(--card); color:var(--fg2);
-             border-radius:var(--radius-s); cursor:pointer; box-shadow:var(--shadow); }
-.theme-btn:hover { color:var(--fg); border-color:var(--muted); }
+             border-radius:999px; cursor:pointer; box-shadow:var(--shadow); }
+.theme-btn:hover { color:var(--fg); border-color:var(--accent); }
 .head-actions { display:flex; align-items:center; gap:10px; }
 .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:28px; }
 .stat { background:var(--card); border:1px solid var(--line); border-radius:var(--radius);

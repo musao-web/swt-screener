@@ -49,12 +49,14 @@ def record(cfg, result_path):
     date = data.get("generated")
     jobs = data["jobs"]
     new_slugs = [j.get("slug") for j in jobs if not j.get("seen") and j.get("slug")]
+    all_slugs = [j.get("slug") for j in jobs if j.get("slug")]
     entry = {
         "date": date,
         "new": len(new_slugs),
         "carried": sum(1 for j in jobs if j.get("seen")),
         "counts": data.get("counts") or {},
-        "slugs": new_slugs,
+        # 存全部 slug（含沿用）：dedup 的「已核查」记忆，同日重跑也不会被清空
+        "slugs": all_slugs,
     }
     hist = hist_path(cfg)
     store = load(hist)
