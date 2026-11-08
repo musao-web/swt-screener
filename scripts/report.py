@@ -224,8 +224,11 @@ def modal(i, job, contacts, fallback, towns, draft):
     reasons = "".join(f'<span class="chip">{esc(t)}</span>' for t in job["reasons"])
     draft_html = ""
     if draft:
-        draft_html = (f'<div class="msec"><div class="mlabel">求职邮件草稿 · 复制即用</div>'
-                      f'<pre class="mpre">{esc(draft["subject"])}\n\n{esc(draft["body"])}</pre></div>')
+        mail_text = draft["subject"] + "\n\n" + draft["body"]
+        # data-text 用 quote=True 单独转义（esc 是 quote=False，引号会破坏属性）
+        draft_html = (f'<div class="msec"><div class="mlabel">求职邮件草稿 · 复制即用'
+                      f'<button class="mailcopy" type="button" data-text="{html.escape(mail_text, quote=True)}">复制</button></div>'
+                      f'<pre class="mpre">{esc(mail_text)}</pre></div>')
     last = f'<div class="msec"><div class="mlabel">雇主最近登录</div><div class="mval">{esc(job["lastVisited"])}</div></div>' if job.get("lastVisited") else ""
     return f"""
   <div class="moverlay" id="mov-{i}" role="dialog" aria-modal="true">
@@ -612,7 +615,13 @@ h1 {{ font-size:26px; font-weight:650; letter-spacing:-0.02em; margin:0; }}
 .ms b {{ color:var(--fg); font-weight:650; font-size:13.5px; }}
 .msec {{ margin-top:16px; }}
 .mlabel {{ font-size:11.5px; font-weight:600; color:var(--muted); letter-spacing:.04em;
-          text-transform:uppercase; margin-bottom:8px; }}
+          text-transform:uppercase; margin-bottom:8px; display:flex; align-items:center;
+          justify-content:space-between; gap:10px; }}
+.mailcopy {{ border:1px solid var(--accent); color:var(--accent); background:transparent;
+          border-radius:999px; padding:3px 12px; font-size:11.5px; font-weight:600;
+          cursor:pointer; letter-spacing:.02em; transition:color .15s,border-color .15s; }}
+.mailcopy:hover {{ color:var(--accent-hover); border-color:var(--accent-hover); }}
+.mailcopy:active {{ transform:scale(.96); }}
 .mval {{ font-size:13px; color:var(--fg2); }}
 .cemail {{ color:var(--fg); font-weight:500; word-break:break-all; }}
 .cphone, .cnote {{ color:var(--muted); font-size:12px; margin-top:2px; }}
@@ -738,6 +747,29 @@ tr.extra td {{ background:var(--bg); border-bottom:1px solid var(--line2);
     if (e.target.classList.contains('moverlay') || e.target.classList.contains('mclose')) hide();
   }});
   document.addEventListener('keydown', function (e) {{ if (e.key === 'Escape') hide(); }});
+}})();
+(function () {{
+  // 邮件草稿一键复制（clipboard API，file:// 等环境走 execCommand 兜底）
+  function fallbackCopy(text) {{
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try {{ document.execCommand('copy'); }} catch (e) {{}}
+    ta.remove();
+  }}
+  document.addEventListener('click', function (e) {{
+    var b = e.target.closest ? e.target.closest('.mailcopy') : null;
+    if (!b || !b.hasAttribute('data-text')) return;
+    var text = b.getAttribute('data-text') || '';
+    var done = function () {{
+      var old = b.textContent;
+      b.textContent = '已复制 ✓';
+      setTimeout(function () {{ b.textContent = old; }}, 1500);
+    }};
+    if (navigator.clipboard && navigator.clipboard.writeText) {{
+      navigator.clipboard.writeText(text).then(done, function () {{ fallbackCopy(text); done(); }});
+    }} else {{ fallbackCopy(text); done(); }}
+  }});
 }})();
 (function () {{
   // 统计卡点选：A/B/C 把岗位墙切换成平面清单，X 展开排除表（默认收起）；再点同一张恢复岗位墙
