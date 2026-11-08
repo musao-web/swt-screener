@@ -1,6 +1,10 @@
 # swt-screener — InterExchange Work & Travel 岗位筛选器
 
+![GitHub Repo stars](https://img.shields.io/github/stars/musao-web/swt-screener?style=flat)
+
 一个 Claude Code skill：按**你自己设定的标准**给 InterExchange (IE) Work & Travel 岗位分档筛选，产出带判定理由、雇主联系方式、求职邮件草稿和 IE 深链的 HTML 报告，并按你的个人档案为每个雇主个性化求职邮件。
+
+> ⭐ 用得上就顺手点个 star，是对开源项目最好的支持！
 
 - **A 优先 / B 权衡 / C 红线 / X 排除** 四档，每个岗位都写明「为什么进这档」
 - **3D 岗位墙**展示可考虑岗位（点卡片看理由、联系方式和邮件草稿），排除岗一目了然的表格
