@@ -47,7 +47,7 @@ pip install pyyaml   # Python 3.10+，唯一依赖
 1. **筛选口径**（写入 `config.yaml`）：到岗窗口、离岗约束、住宿、岗位红线、薪资工时线、地域等，逐维确认，留空 = 该维度不判定。
 2. **个人档案**（写入 `profile.yaml`，只问一次）：姓名、联系方式（邮箱/电话/WhatsApp）、学校、专业、到岗日/离岗日、相关工作经历与优势、可选自我介绍视频链接。说「更新我的档案」才会重新收集。
 
-准备好岗位数据后（格式见 `references/input_schema.md`，需登录 IE 抓取详情页），**一条命令出报告**：
+准备好岗位数据后（格式见 `references/input_schema.md`；**首次使用要把自己在 IE 能看到的所有岗位筛一遍**，采集教程见 `references/data_collection.md`：列表全量快照 → 粗筛 → 只对候选抓详情 → 合并），**一条命令出报告**：
 
 ```bash
 python3 scripts/run.py config.yaml <input.json>
@@ -121,12 +121,17 @@ swt-screener/
 │   ├── report.py             # HTML 报告（历轮记录表 / 3D 岗位墙 / 联系方式 / 邮件草稿 / 深链）
 │   ├── mailgen.py            # 邮件底稿填充（读 profile.yaml + 模板）
 │   ├── history.py            # 历轮筛查历史（record 幂等追加 / update 补陷阱数与备注 / list）
-│   └── build_site_data.py    # knowledge/ → webapp/data.js（改了知识库后重跑）
+│   ├── build_site_data.py    # knowledge/ → webapp/data.js（改了知识库后重跑）
+│   └── collect/              # 数据采集三件套（首次全量筛查用）
+│       ├── ie_capture.js     #   控制台采集脚本：列表+详情自动捕获、一键导出
+│       ├── prefilter.py      #   列表快照粗筛（僵尸岗/红线/孤岛镇）→ 候选清单
+│       └── collect_to_input.py  # 列表 + 详情合并成 input.json
 ├── knowledge/                # 共同知识库（岗位映射 / 城镇 / 陷阱 / 联系方式）
 ├── webapp/                   # 工作台网页：设置表单（导出 yaml）+ 报告渲染（拖入结果 JSON 在线看）
 │   └── demo/                 # 演示数据（中性口径跑出的示例结果 + 示例历轮），工作台「加载演示数据」用
 └── references/
-    └── input_schema.md       # 岗位数据输入格式
+    ├── input_schema.md       # 岗位数据输入格式
+    └── data_collection.md    # 采集教程（首次全量筛查的两段式流程）
 ```
 
 ## 自定义

@@ -41,9 +41,16 @@ description: 帮助 InterExchange (IE) Work & Travel 学生按自设标准筛选
 
 之后每次使用直接进入第 2 步，不再问档案。用户说「更新我的档案」才重新收集；也可以直接编辑两个 yaml 或回网页表单改后重新导出。
 
-### 2. 准备数据
+### 2. 准备数据（首次使用 = 全量筛查；之后只筛新卡）
 
-详情页数据文件，格式见 `references/input_schema.md`。没有现成数据时，用浏览器登录 IE 后抓取（列表页卡片 + 每个候选岗详情页），关键字段是 `posdesc` 首句、start/finish 窗口、share/rent。
+- **首次使用**：用户需要把自己在 IE 能看到的所有岗位全部筛一遍。采集按两段式进行，完整教程见 `references/data_collection.md`：
+  1. 列表页全量快照（一次拿全在架卡：F12 复制接口响应，或控制台粘贴 `scripts/collect/ie_capture.js` 自动采集）
+  2. `python3 scripts/collect/prefilter.py config.yaml 列表快照.json --out 候选清单.json` 粗筛——只用卡片字段砍掉僵尸岗/标题红线/孤岛镇，出候选清单
+  3. 只对候选逐个抓详情页（`posdesc` 首句、Start/Finish、住宿、租金、室友数）
+  4. `python3 scripts/collect/collect_to_input.py 列表.json 详情.json --only 候选清单.json --out input.json` 合并
+- **例行筛查**：登录 IE 看新岗，只抓新卡详情合并进 input.json；已核查卡由 history.dedup 自动「沿用」。
+- 数据格式见 `references/input_schema.md`。
+- **采集红线（写死）**：只在用户自己已登录的 IE 会话里采集、不自动登录、不碰账号、限速、发现风控立即停。
 
 ### 3. 一条命令出报告
 
@@ -101,9 +108,13 @@ python3 scripts/history.py update config.yaml <YYYY-MM-DD> --traps-added 18 --tr
 - `scripts/report.py` — HTML 报告（3D 岗位墙 / 联系方式 / 邮件草稿 / 深链）
 - `scripts/mailgen.py` — 邮件底稿填充（读 profile.yaml + 模板）
 - `scripts/history.py` — 历轮筛查历史（record 幂等追加 / update 补陷阱数与备注 / list），报告历轮表的数据源
+- `scripts/collect/ie_capture.js` — 浏览器控制台采集脚本（列表 + 详情自动捕获，一键导出）
+- `scripts/collect/prefilter.py` — 列表快照粗筛（僵尸岗/标题红线/孤岛镇 → 候选清单）
+- `scripts/collect/collect_to_input.py` — 列表 + 详情合并成 input.json
 - `assets/email_template.md` — 邮件模板（简约底稿，AI 定稿时个性化）
 - `knowledge/position_map.yaml` — IE 标准岗位→档位映射、详情页实岗判定表
 - `knowledge/towns.yaml` — 孤岛镇 / 住房危机镇 / 治安调研库
 - `knowledge/contacts.yaml` — 雇主联系方式库
 - `knowledge/traps.md` — 卡片标题陷阱案例库
 - `references/input_schema.md` — 输入数据格式
+- `references/data_collection.md` — 岗位数据采集教程（首次全量筛查的两段式流程）
