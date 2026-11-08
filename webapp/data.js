@@ -4,7 +4,7 @@ window.SITE_DATA = {
   "On Deck (WI Door County)": {
    "email": "",
    "phone": "(920) 854-2607 / (920) 868-9091",
-   "note": "同域另有 （店主 Mitch Larson）"
+   "note": "同域另有店主 Mitch Larson 的邮箱（未入库）"
   },
   "Amagansett Golf Club (NY)": {
    "email": "",

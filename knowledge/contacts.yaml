@@ -1,32 +1,32 @@
 # 雇主联系方式库（报告"联系方式块"的数据源）
 # IE 详情页没有联系方式字段 → 全部靠此库 + 公开来源调研。
 # 维护：调研到雇主公开邮箱/电话时按格式追加（来源=官网/招聘页/公开社媒，公开来源交叉）。
-# 无公开邮箱的写 email: ""，note 里给官网表单/电话渠道。
-# 字段：email / phone / note（官网表单、门店电话等渠道建议）
+# ⚠️ 公开仓库不收录雇主真实邮箱：email 一律写 ""，真实邮箱只在本地调研记录里留存。
+# 字段：email（仓库内留空）/ phone / note（官网表单、门店电话等渠道建议）
 
 employers:
   On Deck (WI Door County):             # Sister Bay / Fish Creek 两店同老板
-    email: 
+    email: ""
     phone: "(920) 854-2607 / (920) 868-9091"
-    note: 同域另有 （店主 Mitch Larson）
+    note: 同域另有店主 Mitch Larson 的邮箱（未入库）
   Amagansett Golf Club (NY):
-    email: 
+    email: ""
     phone: ""
     note: ""
   Ebenezer's Pub (ME Lovell):
-    email: 
+    email: ""
     phone: ""
     note: ""
   White Gull Inn (WI Fish Creek):
-    email: 
+    email: ""
     phone: ""
     note: ""
   Cape Cod National Golf Club (MA):
-    email: 
+    email: ""
     phone: ""
     note: IE 卡片岗位会变动，发信前核对当前岗位
   Charlie's Shirts (CO Vail):
-    email: 
+    email: ""
     phone: "(970) 476-9737"
     note: 官网表单 charliestshirts.com
   Coffee On The Rocks (CO Estes Park):
@@ -38,7 +38,7 @@ employers:
     phone: "(207) 288-3281"
     note: 无公开邮箱 → benandbills.com 表单
   The Cove Restaurant (MI Leland):
-    email: 
+    email: ""
     phone: "+1 231 256 9834"
     note: 电话可能为座机未开通 WhatsApp，可改短信/电话
   Acadia Outdoors (ME Bar Harbor):
